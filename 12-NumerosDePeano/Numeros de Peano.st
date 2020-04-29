@@ -124,62 +124,6 @@ IIII subclass: #IIIII
 	category: 'Numeros de Peano'!
 
 
-!classDefinition: #IIIIII category: #'Numeros de Peano'!
-IIIII subclass: #IIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
-!classDefinition: #IIIIIII category: #'Numeros de Peano'!
-IIIIII subclass: #IIIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
-!classDefinition: #IIIIIIII category: #'Numeros de Peano'!
-IIIIIII subclass: #IIIIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
-!classDefinition: #IIIIIIIII category: #'Numeros de Peano'!
-IIIIIIII subclass: #IIIIIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
-!classDefinition: #IIIIIIIIII category: #'Numeros de Peano'!
-IIIIIIIII subclass: #IIIIIIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
-!classDefinition: #IIIIIIIIIII category: #'Numeros de Peano'!
-IIIIIIIIII subclass: #IIIIIIIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
-!classDefinition: #IIIIIIIIIIII category: #'Numeros de Peano'!
-IIIIIIIIIII subclass: #IIIIIIIIIIII
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Numeros de Peano'!
-
-
 !classDefinition: #TestNumerosDePeano category: #'Numeros de Peano'!
 DenotativeObject subclass: #TestNumerosDePeano
 	instanceVariableNames: ''
