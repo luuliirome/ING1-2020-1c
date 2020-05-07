@@ -21,11 +21,11 @@ TestCase subclass: #CustomerBookTest
 	poolDictionaries: ''
 	category: 'CodigoRepetido-Ejercicio'!
 
-!CustomerBookTest methodsFor: 'assertions' stamp: 'LR 5/6/2020 21:16:02'!
-on: aBlockToFail raises: anErrorToRaise andSatisfies: aBlockToAssert
+!CustomerBookTest methodsFor: 'assertions' stamp: 'LR 5/6/2020 22:30:43'!
+on: aBlockToFail raises: expectedErrorType andSatisfies: aBlockToAssert
 	
 	[aBlockToFail value. self fail.] 
-	on: anErrorToRaise 
+	on: expectedErrorType 
 		do: ([:anError | self satisfy: (aBlockToAssert value: anError)]).! !
 
 !CustomerBookTest methodsFor: 'assertions' stamp: 'LR 5/6/2020 21:19:15'!
