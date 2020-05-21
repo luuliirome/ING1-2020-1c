@@ -139,125 +139,261 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #SentenceFinderByPrefixTest category: #'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'emptySentenceFinder sentenceFinderWithElements stackFromSentenceFinder'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:55:59'!
+test01FindFromEmptyStackWithValidPrefixShouldReturnEmptyCollection
+	self assert: (emptySentenceFinder find: 'holis') isEmpty.! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:56:28'!
+test02FindFromStackAValidPrefixThatDoesntExistShouldReturnEmptyCollection
+
+	self assert: (sentenceFinderWithElements find: 'holis') isEmpty.! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:58:36'!
+test03FindFromStackAValidPrefixThatExistsShouldReturnAllItsAppearancesAndNothingElse
+	
+	|sentences|
+	
+	sentences := sentenceFinderWithElements find: 'something'.
+	self assert: (sentences size = 2 
+		and: (sentences includes: 'something') 
+		and: (sentences includes: 'something else')
+		and: (sentences includes: 'sOmEtHiNgS') not
+		and: (sentences includes: 'some thing') not ).! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:57:26'!
+test04FindIsCaseSensitiveShouldReturnEmptyCollection
+	"En el stack tenemos las siguientes oraciones: [something, some thing, somethingSSSS, something else, SomeThing]
+	Ante el prefijo SOME ninguna oración debería ser retornada ya que Find es case SENSITIVE."
+	self assert: (sentenceFinderWithElements find: 'SOME') isEmpty.
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:58:09'!
+test05AfterFindStackStillTheSame
+
+	sentenceFinderWithElements find: 'something'.
+	
+	self assert: stackFromSentenceFinder pop = 'SomeThing'.	
+	self assert: stackFromSentenceFinder pop = 'something else'.
+	self assert: stackFromSentenceFinder pop = 'sOmEtHiNgS'.
+	self assert: stackFromSentenceFinder pop = 'some thing'.
+	self assert: stackFromSentenceFinder pop = 'something'.! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:12:27'!
+test06FindWithEmptyPrefixShouldReturnError
+
+	[sentenceFinderWithElements find: ''.
+		self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:13:01'!
+test07FindWithEmptySpacesPrefixShouldReturnError
+
+	[sentenceFinderWithElements find: 'some thing'.
+		self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:13:38'!
+test08FindEmptyStackWithEmptySpacesPrefixShouldReturnError
+
+	[emptySentenceFinder find: 'some thing'.
+		self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:54:53'!
+test09FindEmptyStackWithEmptyPrefixShouldReturnError
+
+	[emptySentenceFinder find: ''.
+		self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'setUp/tearDown' stamp: 'LR 5/20/2020 22:58:20'!
+setUp
+	
+	emptySentenceFinder := SentenceFinderByPrefix newWith: OOStack new.
+	
+	stackFromSentenceFinder := OOStack new.
+	
+	(OrderedCollection with: 'something' with: 'some thing' with: 'sOmEtHiNgS' with: 'something else' with: 'SomeThing') do: [
+		:elem |
+			stackFromSentenceFinder push: elem.
+		].
+
+	sentenceFinderWithElements := SentenceFinderByPrefix newWith: stackFromSentenceFinder.! !
 
 
-!classDefinition: #Element category: #'Stack-Exercise'!
-Object subclass: #Element
+!classDefinition: #Node category: #'Stack-Exercise'!
+Object subclass: #Node
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!Element methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:00:42'!
-isNull
+!Node methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 17:35:43'!
+parent
 	self subclassResponsibility ! !
 
-!Element methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:00:53'!
+!Node methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 17:33:19'!
+sendValueTo: interrogator
+	self subclassResponsibility ! !
+
+!Node methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 17:33:05'!
+size
+	self subclassResponsibility ! !
+
+!Node methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 17:33:32'!
 value
-	self subclassResponsibility! !
+	self subclassResponsibility ! !
 
 
-!classDefinition: #NullElement category: #'Stack-Exercise'!
-Element subclass: #NullElement
+!classDefinition: #NullNode category: #'Stack-Exercise'!
+Node subclass: #NullNode
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!NullElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:08:24'!
-ifCanGetValue: interrogator
-	^interrogator cantGetValue! !
+!NullNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:44:58'!
+parent
+	^self error: 'Null Node have no parent'! !
 
-!NullElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:59:49'!
-isNull
-	^true.! !
+!NullNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:27:19'!
+size
+	^0.! !
 
-!NullElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:01:01'!
+!NullNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 21:01:13'!
 value
-	self error! !
+	^self error: 'Null Node have no value'! !
 
-
-!classDefinition: #RealElement category: #'Stack-Exercise'!
-Element subclass: #RealElement
-	instanceVariableNames: 'value'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
 
-!RealElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:08:04'!
-ifCanGetValue: interrogator
-	^interrogator canGetValue: self value.! !
-
-!RealElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:10:53'!
-initializeWith: anElement
-	value := anElement! !
-
-!RealElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:59:59'!
-isNull
-	^false.! !
-
-!RealElement methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:01:08'!
-value
-	^value! !
+!NullNode methodsFor: 'unclassified' stamp: 'LR 5/20/2020 22:17:52'!
+sendValueTo: interrogator
+	^interrogator nodeNull.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'RealElement class' category: #'Stack-Exercise'!
-RealElement class
+!classDefinition: 'NullNode class' category: #'Stack-Exercise'!
+NullNode class
+	instanceVariableNames: 'uniqueInstance'!
+
+!NullNode class methodsFor: 'as yet unclassified' stamp: 'LR 5/20/2020 18:40:40'!
+initialize
+	uniqueInstance := self basicNew ! !
+
+!NullNode class methodsFor: 'as yet unclassified' stamp: 'LR 5/20/2020 18:36:44'!
+new
+	^uniqueInstance	! !
+
+
+!classDefinition: #RealNode category: #'Stack-Exercise'!
+Node subclass: #RealNode
+	instanceVariableNames: 'value parent'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!RealNode methodsFor: 'initialization' stamp: 'LR 5/18/2020 17:20:43'!
+initializeWith: aValue childOf: aNode 
+	value := aValue.
+	parent := aNode.! !
+
+
+!RealNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:35:50'!
+parent
+	^parent! !
+
+!RealNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:27:11'!
+size
+	^ 1 + parent size.! !
+
+!RealNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:32:46'!
+value
+	^value! !
+
+
+!RealNode methodsFor: 'unclassified' stamp: 'LR 5/20/2020 22:16:55'!
+sendValueTo: interrogator
+	^interrogator nodeValue: self value.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'RealNode class' category: #'Stack-Exercise'!
+RealNode class
 	instanceVariableNames: ''!
 
-!RealElement class methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:10:38'!
-newWith: anElement
-	^RealElement new initializeWith: anElement.! !
+!RealNode class methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 17:28:26'!
+newWith: aValue childOf: aNode
+	^RealNode new initializeWith: aValue childOf: aNode.! !
 
 
 !classDefinition: #OOStack category: #'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: 'xxxxxxxxxCollection'
+	instanceVariableNames: 'last'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:06:33'!
-canGetValue: value
-	^value.! !
+!OOStack methodsFor: 'state' stamp: 'LR 5/18/2020 17:26:37'!
+isEmpty
+	^self size = 0.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:07:20'!
-cantGetValue
-	^self emptyStackError.! !
+!OOStack methodsFor: 'state' stamp: 'LR 5/18/2020 17:26:50'!
+size
+	^last size.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:07:11'!
+
+!OOStack methodsFor: 'adding' stamp: 'LR 5/18/2020 17:29:35'!
+push: anElement
+	
+	last := RealNode newWith: anElement childOf: self last.! !
+
+
+!OOStack methodsFor: 'initialization' stamp: 'LR 5/18/2020 17:24:58'!
+initialize
+	last := NullNode new.! !
+
+
+!OOStack methodsFor: 'errors' stamp: 'LR 5/14/2020 23:07:11'!
 emptyStackError
 	^self error: self class stackEmptyErrorDescription! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:02:14'!
-initialize
-	xxxxxxxxxCollection := OrderedCollection new.
-	xxxxxxxxxCollection add: NullElement new.! !
+!OOStack methodsFor: 'errors' stamp: 'LR 5/20/2020 22:17:35'!
+nodeNull
+	^self emptyStackError.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:02:08'!
-isEmpty
-	^xxxxxxxxxCollection last isNull.! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:05:26'!
+!OOStack methodsFor: 'removing' stamp: 'LR 5/18/2020 17:47:04'!
 pop
-	^xxxxxxxxxCollection removeLast ifCanGetValue: self.! !
+	|popedElementValue|
+	
+	popedElementValue := self top. 
+	last := last parent.
+	^popedElementValue.
+	
+	! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:09:27'!
-push: anElement
-	xxxxxxxxxCollection add: (RealElement newWith: anElement).! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:53:20'!
-size
-	^xxxxxxxxxCollection size - 1.! !
+!OOStack methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:29:47'!
+last
+	^last! !
 
-!OOStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 23:05:20'!
+!OOStack methodsFor: 'accessing' stamp: 'LR 5/20/2020 22:16:40'!
+nodeValue: aValue.
+	^aValue.! !
+
+!OOStack methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:31:13'!
 top
-	^xxxxxxxxxCollection last ifCanGetValue: self.! !
+	^last sendValueTo: self.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -270,99 +406,73 @@ stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
 
-
 
 !classDefinition: #SentenceFinderByPrefix category: #'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
-	instanceVariableNames: ''
+	instanceVariableNames: 'stack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-
-!classDefinition: #Stack category: #'Stack-Exercise'!
-Object subclass: #Stack
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
+!SentenceFinderByPrefix methodsFor: 'errors' stamp: 'LR 5/18/2020 21:31:58'!
+invalidPrefixError
+	^self error: self class invalidPrefixDescription! !
 
-
-!classDefinition: #NullStack category: #'Stack-Exercise'!
-Stack subclass: #NullStack
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
 
-!NullStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:38:54'!
-canotPopFromEmptyStack
-	^self error: self class stackEmptyErrorDescription! !
+!SentenceFinderByPrefix methodsFor: 'initialization' stamp: 'LR 5/18/2020 18:48:48'!
+initializeWith: aStack
+	stack := aStack.! !
 
-!NullStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:39:30'!
-canotTopFromEmptyStack
-	^self error: self class stackEmptyErrorDescription! !
 
-!NullStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:10:08'!
-isEmpty
-	^true.! !
+!SentenceFinderByPrefix methodsFor: 'accessing' stamp: 'LR 5/18/2020 21:40:31'!
+find: aPrefix
 
-!NullStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:11:16'!
-pop
-	^self canotPopFromEmptyStack.! !
+	"find returns all the sentences that begins with aPrefix (case sensitive) from the underlying stack.
+	Empty prefixes or prefixes with empty spaces are not supported."
+	
+	|sentences|
+	
+	(self isInvalidPrefix: aPrefix) ifTrue: [^self invalidPrefixError].
+	
+	sentences := self getSentences.
 
-!NullStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:27:52'!
-push: anElement
-	^RealStack newWith: anElement.! !
+	^sentences select: [:sentence | sentence beginsWith: aPrefix].! !
 
-!NullStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:39:22'!
-top
-	^self canotTopFromEmptyStack.! !
+!SentenceFinderByPrefix methodsFor: 'accessing' stamp: 'LR 5/18/2020 19:10:14'!
+getSentences
+
+	| sentences popedSentence |
+	
+	sentences := OrderedCollection new.
+	
+	stack isEmpty ifTrue: [^sentences].	
+	
+	stack size timesRepeat: [
+		popedSentence := stack pop.
+		sentences addFirst: popedSentence.
+		].
+	
+	sentences do: [:sentence | stack push: sentence].
+	
+	^sentences.! !
+
+
+!SentenceFinderByPrefix methodsFor: 'comparing' stamp: 'LR 5/18/2020 21:30:41'!
+isInvalidPrefix: aPrefix
+	^aPrefix = '' or: (aPrefix includesSubString: ' ').! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'NullStack class' category: #'Stack-Exercise'!
-NullStack class
+!classDefinition: 'SentenceFinderByPrefix class' category: #'Stack-Exercise'!
+SentenceFinderByPrefix class
 	instanceVariableNames: ''!
 
-!NullStack class methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:38:38'!
-stackEmptyErrorDescription
-	^ 'Stack is empty'! !
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 21:07:11'!
+invalidPrefixDescription
+	^'Prefix cant be empty and cant have empty spaces'! !
 
-
-!classDefinition: #RealStack category: #'Stack-Exercise'!
-Stack subclass: #RealStack
-	instanceVariableNames: 'value'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 18:52:21'!
+newWith: aStack
+	^SentenceFinderByPrefix new initializeWith: aStack.! !
 
-!RealStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:51:59'!
-initializeWith: anElement.
-	value := anElement.! !
-
-!RealStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:17:09'!
-isEmpty
-	^false.! !
-
-!RealStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:52:09'!
-pop
-	^value.! !
-
-!RealStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:51:32'!
-push: anElement
-	^RealStack newWith: anElement.! !
-
-!RealStack methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:52:48'!
-top
-	^value.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'RealStack class' category: #'Stack-Exercise'!
-RealStack class
-	instanceVariableNames: ''!
-
-!RealStack class methodsFor: 'as yet unclassified' stamp: 'LR 5/14/2020 22:28:02'!
-newWith: anElement
-	^RealStack new initializeWith: anElement.! !
+NullNode initialize!
