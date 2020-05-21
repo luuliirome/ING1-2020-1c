@@ -148,9 +148,8 @@ TestCase subclass: #SentenceFinderByPrefixTest
 test01FindFromEmptyStackWithValidPrefixShouldReturnEmptyCollection
 	self assert: (emptySentenceFinder find: 'holis') isEmpty.! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:56:28'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/21/2020 09:59:33'!
 test02FindFromStackAValidPrefixThatDoesntExistShouldReturnEmptyCollection
-
 	self assert: (sentenceFinderWithElements find: 'holis') isEmpty.! !
 
 !SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:58:36'!
@@ -173,48 +172,36 @@ test04FindIsCaseSensitiveShouldReturnEmptyCollection
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:58:09'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/21/2020 10:00:32'!
 test05AfterFindStackStillTheSame
 
 	sentenceFinderWithElements find: 'something'.
 	
-	self assert: stackFromSentenceFinder pop = 'SomeThing'.	
-	self assert: stackFromSentenceFinder pop = 'something else'.
-	self assert: stackFromSentenceFinder pop = 'sOmEtHiNgS'.
-	self assert: stackFromSentenceFinder pop = 'some thing'.
-	self assert: stackFromSentenceFinder pop = 'something'.! !
+	self assert: (stackFromSentenceFinder pop = 'SomeThing' 
+	and: stackFromSentenceFinder pop = 'something else'
+	and: stackFromSentenceFinder pop = 'sOmEtHiNgS'
+	and: stackFromSentenceFinder pop = 'some thing'
+	and: stackFromSentenceFinder pop = 'something').! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:12:27'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/21/2020 09:58:18'!
 test06FindWithEmptyPrefixShouldReturnError
 
-	[sentenceFinderWithElements find: ''.
-		self fail.]
-	on: Error
-	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+	self shouldFailWithInvalidPrefixDescription: [sentenceFinderWithElements find: ''.]! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:13:01'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/21/2020 09:58:33'!
 test07FindWithEmptySpacesPrefixShouldReturnError
 
-	[sentenceFinderWithElements find: 'some thing'.
-		self fail.]
-	on: Error
-	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+	self shouldFailWithInvalidPrefixDescription: [sentenceFinderWithElements find: 'some thing'].! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/18/2020 21:13:38'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/21/2020 09:56:12'!
 test08FindEmptyStackWithEmptySpacesPrefixShouldReturnError
 
-	[emptySentenceFinder find: 'some thing'.
-		self fail.]
-	on: Error
-	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+	self shouldFailWithInvalidPrefixDescription: [emptySentenceFinder find: 'some thing'].! !
 
-!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/20/2020 22:54:53'!
+!SentenceFinderByPrefixTest methodsFor: 'testing' stamp: 'LR 5/21/2020 09:58:49'!
 test09FindEmptyStackWithEmptyPrefixShouldReturnError
 
-	[emptySentenceFinder find: ''.
-		self fail.]
-	on: Error
-	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].! !
+	self shouldFailWithInvalidPrefixDescription: [emptySentenceFinder find: ''.].! !
 
 
 !SentenceFinderByPrefixTest methodsFor: 'setUp/tearDown' stamp: 'LR 5/20/2020 22:58:20'!
@@ -230,6 +217,17 @@ setUp
 		].
 
 	sentenceFinderWithElements := SentenceFinderByPrefix newWith: stackFromSentenceFinder.! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'assertions' stamp: 'LR 5/21/2020 09:57:32'!
+shouldFailWithInvalidPrefixDescription: aFindExecution
+	
+	[aFindExecution value.
+		self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText =  sentenceFinderWithElements class invalidPrefixDescription].
+
+	! !
 
 
 !classDefinition: #Node category: #'Stack-Exercise'!
