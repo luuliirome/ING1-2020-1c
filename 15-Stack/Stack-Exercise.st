@@ -263,22 +263,21 @@ Node subclass: #NullNode
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!NullNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:44:58'!
+!NullNode methodsFor: 'accessing' stamp: 'LR 5/20/2020 23:01:30'!
 parent
-	^self error: 'Null Node have no parent'! !
+	^self error: 'Null Node has no parent'! !
+
+!NullNode methodsFor: 'accessing' stamp: 'LR 5/20/2020 23:05:01'!
+sendValueTo: anInterrogator
+	^anInterrogator nodeNull.! !
 
 !NullNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:27:19'!
 size
 	^0.! !
 
-!NullNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 21:01:13'!
+!NullNode methodsFor: 'accessing' stamp: 'LR 5/20/2020 23:01:38'!
 value
-	^self error: 'Null Node have no value'! !
-
-
-!NullNode methodsFor: 'unclassified' stamp: 'LR 5/20/2020 22:17:52'!
-sendValueTo: interrogator
-	^interrogator nodeNull.! !
+	^self error: 'Null Node has no value'! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -286,13 +285,14 @@ sendValueTo: interrogator
 NullNode class
 	instanceVariableNames: 'uniqueInstance'!
 
-!NullNode class methodsFor: 'as yet unclassified' stamp: 'LR 5/20/2020 18:40:40'!
-initialize
-	uniqueInstance := self basicNew ! !
-
-!NullNode class methodsFor: 'as yet unclassified' stamp: 'LR 5/20/2020 18:36:44'!
+!NullNode class methodsFor: 'instance creation' stamp: 'LR 5/20/2020 18:36:44'!
 new
 	^uniqueInstance	! !
+
+
+!NullNode class methodsFor: 'initialization' stamp: 'LR 5/20/2020 18:40:40'!
+initialize
+	uniqueInstance := self basicNew ! !
 
 
 !classDefinition: #RealNode category: #'Stack-Exercise'!
@@ -312,6 +312,10 @@ initializeWith: aValue childOf: aNode
 parent
 	^parent! !
 
+!RealNode methodsFor: 'accessing' stamp: 'LR 5/20/2020 23:04:49'!
+sendValueTo: anInterrogator
+	^anInterrogator nodeValue: self value.! !
+
 !RealNode methodsFor: 'accessing' stamp: 'LR 5/18/2020 17:27:11'!
 size
 	^ 1 + parent size.! !
@@ -320,18 +324,13 @@ size
 value
 	^value! !
 
-
-!RealNode methodsFor: 'unclassified' stamp: 'LR 5/20/2020 22:16:55'!
-sendValueTo: interrogator
-	^interrogator nodeValue: self value.! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'RealNode class' category: #'Stack-Exercise'!
 RealNode class
 	instanceVariableNames: ''!
 
-!RealNode class methodsFor: 'as yet unclassified' stamp: 'LR 5/18/2020 17:28:26'!
+!RealNode class methodsFor: 'instance creation' stamp: 'LR 5/18/2020 17:28:26'!
 newWith: aValue childOf: aNode
 	^RealNode new initializeWith: aValue childOf: aNode.! !
 
