@@ -284,9 +284,9 @@ for: anExecutor
 canExecuteCommand: aChar
 	self subclassResponsibility ! !
 
-!Command class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:45:44'!
-command: aChar for: anExecutor
-	^(self subclasses detect: [:subClass | subClass canExecuteCommand: aChar] ifNone: NullCommand) for: anExecutor.! !
+!Command class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:48:07'!
+command: aCommand for: anExecutor
+	^(self subclasses detect: [:subClass | subClass canExecuteCommand: aCommand] ifNone: NullCommand) for: anExecutor.! !
 
 
 !classDefinition: #Backward category: #'Mars Rover'!
@@ -306,9 +306,9 @@ execute
 Backward class
 	instanceVariableNames: ''!
 
-!Backward class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:25:12'!
-canExecuteCommand: aChar
-	^aChar = $b! !
+!Backward class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:48:23'!
+canExecuteCommand: aCommand
+	^aCommand = $b! !
 
 
 !classDefinition: #Forward category: #'Mars Rover'!
@@ -328,9 +328,9 @@ execute
 Forward class
 	instanceVariableNames: ''!
 
-!Forward class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:25:17'!
-canExecuteCommand: aChar
-	^aChar = $f! !
+!Forward class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:48:30'!
+canExecuteCommand: aCommand
+	^aCommand = $f! !
 
 
 !classDefinition: #NullCommand category: #'Mars Rover'!
@@ -350,8 +350,8 @@ execute
 NullCommand class
 	instanceVariableNames: ''!
 
-!NullCommand class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:35:08'!
-canExecuteCommand: aChar
+!NullCommand class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:48:34'!
+canExecuteCommand: aCommand
 	^false! !
 
 
@@ -372,9 +372,9 @@ execute
 RotateLeft class
 	instanceVariableNames: ''!
 
-!RotateLeft class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:25:22'!
-canExecuteCommand: aChar
-	^aChar = $l! !
+!RotateLeft class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:48:51'!
+canExecuteCommand: aCommand
+	^aCommand = $l! !
 
 
 !classDefinition: #RotateRight category: #'Mars Rover'!
@@ -394,9 +394,9 @@ execute
 RotateRight class
 	instanceVariableNames: ''!
 
-!RotateRight class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:25:27'!
-canExecuteCommand: aChar
-	^aChar = $r! !
+!RotateRight class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:48:59'!
+canExecuteCommand: aCommand
+	^aCommand = $r! !
 
 
 !classDefinition: #MarsRover category: #'Mars Rover'!
@@ -427,10 +427,10 @@ initializeFacingWestWithCoordinate: aCoordinate
 backward
 	position backward.! !
 
-!MarsRover methodsFor: 'commands' stamp: 'LR 6/7/2020 17:46:17'!
-executeCommands: aString 
-	aString do: [ :aChar |
-		(Command command: aChar for: self) execute.
+!MarsRover methodsFor: 'commands' stamp: 'LR 6/7/2020 18:47:43'!
+executeCommands: aCommandList 
+	aCommandList do: [ :aCommand |
+		(Command command: aCommand for: self) execute.
 	].! !
 
 !MarsRover methodsFor: 'commands' stamp: 'LR 6/7/2020 17:28:20'!
