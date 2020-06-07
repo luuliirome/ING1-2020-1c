@@ -255,14 +255,14 @@ setUp
 
 !classDefinition: #Command category: #'Mars Rover'!
 Object subclass: #Command
-	instanceVariableNames: 'marsRover'
+	instanceVariableNames: 'executor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!Command methodsFor: 'initialization' stamp: 'LR 6/7/2020 17:52:12'!
-initializeFor: aMarsRover
-	marsRover _ aMarsRover ! !
+!Command methodsFor: 'initialization' stamp: 'LR 6/7/2020 18:46:03'!
+initializeFor: anExecutor
+	executor _ anExecutor ! !
 
 
 !Command methodsFor: 'execution' stamp: 'LR 6/7/2020 17:40:41'!
@@ -275,18 +275,18 @@ execute
 Command class
 	instanceVariableNames: ''!
 
-!Command class methodsFor: 'instance creation' stamp: 'LR 6/7/2020 17:51:36'!
-for: aMarsRover
-	^self new initializeFor: aMarsRover.! !
+!Command class methodsFor: 'instance creation' stamp: 'LR 6/7/2020 18:45:53'!
+for: anExecutor
+	^self new initializeFor: anExecutor.! !
 
 
 !Command class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:35:42'!
 canExecuteCommand: aChar
 	self subclassResponsibility ! !
 
-!Command class methodsFor: 'command selection' stamp: 'LR 6/7/2020 17:51:47'!
-command: aChar for: aMarsRover
-	^(self subclasses detect: [:subClass | subClass canExecuteCommand: aChar] ifNone: NullCommand) for: aMarsRover.! !
+!Command class methodsFor: 'command selection' stamp: 'LR 6/7/2020 18:45:44'!
+command: aChar for: anExecutor
+	^(self subclasses detect: [:subClass | subClass canExecuteCommand: aChar] ifNone: NullCommand) for: anExecutor.! !
 
 
 !classDefinition: #Backward category: #'Mars Rover'!
@@ -296,9 +296,9 @@ Command subclass: #Backward
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!Backward methodsFor: 'execution' stamp: 'LR 6/7/2020 17:52:17'!
+!Backward methodsFor: 'execution' stamp: 'LR 6/7/2020 18:46:11'!
 execute
-	marsRover backward.! !
+	executor backward.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -318,9 +318,9 @@ Command subclass: #Forward
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!Forward methodsFor: 'execution' stamp: 'LR 6/7/2020 17:52:23'!
+!Forward methodsFor: 'execution' stamp: 'LR 6/7/2020 18:46:17'!
 execute
-	marsRover forward.! !
+	executor forward.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -340,9 +340,9 @@ Command subclass: #NullCommand
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!NullCommand methodsFor: 'execution' stamp: 'LR 6/7/2020 18:42:57'!
+!NullCommand methodsFor: 'execution' stamp: 'LR 6/7/2020 18:46:22'!
 execute
-	marsRover nullCommand! !
+	executor nullCommand! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -362,9 +362,9 @@ Command subclass: #RotateLeft
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!RotateLeft methodsFor: 'execution' stamp: 'LR 6/7/2020 17:52:30'!
+!RotateLeft methodsFor: 'execution' stamp: 'LR 6/7/2020 18:46:27'!
 execute
-	marsRover rotateLeft.! !
+	executor rotateLeft.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -384,9 +384,9 @@ Command subclass: #RotateRight
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!RotateRight methodsFor: 'execution' stamp: 'LR 6/7/2020 17:52:34'!
+!RotateRight methodsFor: 'execution' stamp: 'LR 6/7/2020 18:46:31'!
 execute
-	marsRover rotateRight.! !
+	executor rotateRight.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
