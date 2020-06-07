@@ -1,333 +1,256 @@
 !classDefinition: #MarsRoverTests category: #'Mars Rover'!
 TestCase subclass: #MarsRoverTests
-	instanceVariableNames: ''
+	instanceVariableNames: 'marsRoverFacingNorth marsRoverFacingWest marsRoverFacingEast marsRoverFacingSouth marsRoverToTest marsRoverToTestCoordinate marsRoverToTestOrientation'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 18:25:03'!
 testNorthFacingMarsRoverProcessMultipleFOrdersShouldMoveMultipleTimesForward
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
 	
-	marsRover executeCommands: 'ffff'.
+	marsRoverFacingNorth executeCommands: 'ffff'.
 	
-	self assert: (marsRover coordinate = (0@4)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingNorth coordinate = (0@4)).
+	self assert: (marsRoverFacingNorth orientation = #N)! !
 
-!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 18:25:34'!
 testNorthFacingMarsRoverProcessingMultipleBOrdersShouldMoveMultipleTimesBackwards
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
 	
-	marsRover executeCommands: 'bbbb'.
+	marsRoverFacingNorth executeCommands: 'bbbb'.
 	
-	self assert: (marsRover coordinate = (0@-4)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingNorth coordinate = (0@-4)).
+	self assert: (marsRoverFacingNorth orientation = #N)! !
 
-!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 18:25:47'!
 testNorthFacingMarsRoverProcessingSingleBOrderMovesAPositionBackwards
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
+	marsRoverFacingNorth executeCommands: 'b'.
 	
-	marsRover executeCommands: 'b'.
-	
-	self assert: (marsRover coordinate = (0@-1)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingNorth coordinate = (0@-1)).
+	self assert: (marsRoverFacingNorth orientation = #N)! !
 
-!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 18:25:59'!
 testNorthFacingMarsRoverProcessingSingleFOrderMovesAPositionForwards
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
+	marsRoverFacingNorth executeCommands: 'f'.
 	
-	marsRover executeCommands: 'f'.
-	
-	self assert: (marsRover coordinate = (0@1)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingNorth coordinate = (0@1)).
+	self assert: (marsRoverFacingNorth orientation = #N)! !
 
-!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 18:26:09'!
 testNorthFacingMarsRoverProcessingSingleLOrderShouldChangeOrientationToWest
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
 	
-	marsRover executeCommands: 'l'.
+	marsRoverFacingNorth executeCommands: 'l'.
 	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #W)! !
+	self assert: (marsRoverFacingNorth coordinate = (0@0)).
+	self assert: (marsRoverFacingNorth orientation = #W)! !
 
-!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'NorthFacingMarsRover' stamp: 'LR 6/7/2020 18:26:17'!
 testNorthFacingMarsRoverProcessingSingleROrderShouldChangeOrientationToEast
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
 	
-	marsRover executeCommands: 'r'.
+	marsRoverFacingNorth executeCommands: 'r'.
 	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #E)! !
+	self assert: (marsRoverFacingNorth coordinate = (0@0)).
+	self assert: (marsRoverFacingNorth orientation = #E)! !
 
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:39:16'!
 testProcessingEmptyOrderDoNothing
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
 	
-	marsRover executeCommands: ''.
+	marsRoverToTest executeCommands: ''.
 	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #N).! !
+	self assert: (marsRoverToTest coordinate = marsRoverToTestCoordinate ).
+	self assert: (marsRoverToTest orientation = marsRoverToTestOrientation ).! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:40:26'!
 testProcessingFourLOrdersShouldHasSameOrientation
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
 	
-	marsRover executeCommands: 'llll'.
+	marsRoverToTest executeCommands: 'llll'.
 	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverToTest coordinate = marsRoverToTestCoordinate ).
+	self assert: (marsRoverToTest orientation = marsRoverToTestOrientation ).! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:40:34'!
 testProcessingFourROrdersShouldHasSameOrientation
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
+	marsRoverToTest executeCommands: 'rrrr'.
 	
-	marsRover executeCommands: 'rrrr'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverToTest coordinate = marsRoverToTestCoordinate ).
+	self assert: (marsRoverToTest orientation = marsRoverToTestOrientation ).! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:39:25'!
 testProcessingInvalidOrderDoNothing
-	| marsRover |
-	marsRover := MarsRover facingNorthWithCoordinate: 0@0.
+	marsRoverToTest executeCommands: 'x'.
 	
-	marsRover executeCommands: 'x'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverToTest coordinate = marsRoverToTestCoordinate ).
+	self assert: (marsRoverToTest orientation = marsRoverToTestOrientation ).! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:10:22'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:42:04'!
 testProcessingLBOrderShouldChangeOrientationAndMoveBackward
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'lb'.
 	
-	marsRover executeCommands: 'lb'.
-	
-	self assert: (marsRover coordinate = (0@1)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingWest coordinate = (0@1)).
+	self assert: (marsRoverFacingWest orientation = #S)! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:09:37'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:41:56'!
 testProcessingLFOrderShouldChangeOrientationAndMoveForward
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'lf'.
 	
-	marsRover executeCommands: 'lf'.
-	
-	self assert: (marsRover coordinate = (0@-1)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingWest coordinate = (0@-1)).
+	self assert: (marsRoverFacingWest orientation = #S)! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:10:30'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:41:32'!
 testProcessingRBOrderShouldChangeOrientationAndMoveBackward
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'rb'.
 	
-	marsRover executeCommands: 'rb'.
-	
-	self assert: (marsRover coordinate = (0@-1)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingWest coordinate = (0@-1)).
+	self assert: (marsRoverFacingWest orientation = #N)! !
 
-!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:10:08'!
+!MarsRoverTests methodsFor: 'testing' stamp: 'LR 6/7/2020 18:41:39'!
 testProcessingRFOrderShouldChangeOrientationAndMoveForward
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'rf'.
 	
-	marsRover executeCommands: 'rf'.
-	
-	self assert: (marsRover coordinate = (0@1)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingWest coordinate = (0@1)).
+	self assert: (marsRoverFacingWest orientation = #N)! !
 
 
-!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:29:32'!
 testWestFacingMarsRoverProcessMultipleBOrdersShouldMoveMultipleTimesBackward
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'bbbb'.
 	
-	marsRover executeCommands: 'bbbb'.
-	
-	self assert: (marsRover coordinate = (4@0)).
-	self assert: (marsRover orientation = #W)! !
+	self assert: (marsRoverFacingWest coordinate = (4@0)).
+	self assert: (marsRoverFacingWest orientation = #W)! !
 
-!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:29:41'!
 testWestFacingMarsRoverProcessMultipleFOrdersShouldMoveMultipleTimesForward
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'ffff'.
 	
-	marsRover executeCommands: 'ffff'.
-	
-	self assert: (marsRover coordinate = (-4@0)).
-	self assert: (marsRover orientation = #W)! !
+	self assert: (marsRoverFacingWest coordinate = (-4@0)).
+	self assert: (marsRoverFacingWest orientation = #W)! !
 
-!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:29:53'!
 testWestFacingMarsRoverProcessingSingleBOrderMovesAPositionBackwards
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'b'.
 	
-	marsRover executeCommands: 'b'.
-	
-	self assert: (marsRover coordinate = (1@0)).
-	self assert: (marsRover orientation = #W)! !
+	self assert: (marsRoverFacingWest coordinate = (1@0)).
+	self assert: (marsRoverFacingWest orientation = #W)! !
 
-!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:30:01'!
 testWestFacingMarsRoverProcessingSingleFOrderMovesAPositionForwards
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'f'.
 	
-	marsRover executeCommands: 'f'.
-	
-	self assert: (marsRover coordinate = (-1@0)).
-	self assert: (marsRover orientation = #W)! !
+	self assert: (marsRoverFacingWest coordinate = (-1@0)).
+	self assert: (marsRoverFacingWest orientation = #W)! !
 
-!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:06:35'!
+!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:30:13'!
 testWestFacingMarsRoverProcessingSingleLOrderShouldChangeOrientationToSouth
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'l'.
 	
-	marsRover executeCommands: 'l'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #S).! !
+	self assert: (marsRoverFacingWest coordinate = (0@0)).
+	self assert: (marsRoverFacingWest orientation = #S).! !
 
-!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'WestFacingMarsRover' stamp: 'LR 6/7/2020 18:30:24'!
 testWestFacingMarsRoverProcessingSingleROrderShouldChangeOrientationToNorth
-	| marsRover |
-	marsRover := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingWest executeCommands: 'r'.
 	
-	marsRover executeCommands: 'r'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingWest coordinate = (0@0)).
+	self assert: (marsRoverFacingWest orientation = #N)! !
 
 
-!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 18:31:27'!
 testEastFacingMarsRoverProcessMultipleBOrdersShouldMoveMultipleTimesBackward
-	| marsRover |
-	marsRover := MarsRover facingEastWithCoordinate: 0@0.
+	marsRoverFacingEast executeCommands: 'bbbb'.
 	
-	marsRover executeCommands: 'bbbb'.
-	
-	self assert: (marsRover coordinate = (-4@0)).
-	self assert: (marsRover orientation = #E)! !
+	self assert: (marsRoverFacingEast coordinate = (-4@0)).
+	self assert: (marsRoverFacingEast orientation = #E)! !
 
-!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 18:31:34'!
 testEastFacingMarsRoverProcessMultipleFOrdersShouldMoveMultipleTimesForward
-	| marsRover |
-	marsRover := MarsRover facingEastWithCoordinate: 0@0.
+	marsRoverFacingEast executeCommands: 'ffff'.
 	
-	marsRover executeCommands: 'ffff'.
-	
-	self assert: (marsRover coordinate = (4@0)).
-	self assert: (marsRover orientation = #E)! !
+	self assert: (marsRoverFacingEast coordinate = (4@0)).
+	self assert: (marsRoverFacingEast orientation = #E)! !
 
-!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 18:31:42'!
 testEastFacingMarsRoverProcessingSingleBOrderMovesAPositionBackwards
-	| marsRover |
-	marsRover := MarsRover facingEastWithCoordinate: 0@0.
+	marsRoverFacingEast executeCommands: 'b'.
 	
-	marsRover executeCommands: 'b'.
-	
-	self assert: (marsRover coordinate = (-1@0)).
-	self assert: (marsRover orientation = #E)! !
+	self assert: (marsRoverFacingEast coordinate = (-1@0)).
+	self assert: (marsRoverFacingEast orientation = #E)! !
 
-!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 18:31:49'!
 testEastFacingMarsRoverProcessingSingleFOrderMovesAPositionForwards
-	| marsRover |
-	marsRover := MarsRover facingEastWithCoordinate: 0@0.
+	marsRoverFacingEast executeCommands: 'f'.
 	
-	marsRover executeCommands: 'f'.
-	
-	self assert: (marsRover coordinate = (1@0)).
-	self assert: (marsRover orientation = #E)! !
+	self assert: (marsRoverFacingEast coordinate = (1@0)).
+	self assert: (marsRoverFacingEast orientation = #E)! !
 
-!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 18:31:57'!
 testEastFacingMarsRoverProcessingSingleLOrderShouldChangeOrientationToNorth
-	| marsRover |
-	marsRover := MarsRover facingEastWithCoordinate: 0@0.
+	marsRoverFacingEast executeCommands: 'l'.
 	
-	marsRover executeCommands: 'l'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #N)! !
+	self assert: (marsRoverFacingEast coordinate = (0@0)).
+	self assert: (marsRoverFacingEast orientation = #N)! !
 
-!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'EastFacingMarsRover' stamp: 'LR 6/7/2020 18:32:08'!
 testEastFacingMarsRoverProcessingSingleROrderShouldChangeOrientationToSouth
-	| marsRover |
-	marsRover := MarsRover facingEastWithCoordinate: 0@0.
+	marsRoverFacingEast executeCommands: 'r'.
 	
-	marsRover executeCommands: 'r'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingEast coordinate = (0@0)).
+	self assert: (marsRoverFacingEast orientation = #S)! !
 
 
-!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 18:32:23'!
 testSouthFacingMarsRoverProcessMultipleFOrdersShouldMoveMultipleTimesForward
-	| marsRover |
-	marsRover := MarsRover facingSouthWithCoordinate: 0@0.
+	marsRoverFacingSouth executeCommands: 'ffff'.
 	
-	marsRover executeCommands: 'ffff'.
-	
-	self assert: (marsRover coordinate = (0@-4)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingSouth coordinate = (0@-4)).
+	self assert: (marsRoverFacingSouth orientation = #S)! !
 
-!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 18:32:33'!
 testSouthFacingMarsRoverProcessingMultipleBOrdersShouldMoveMultipleTimesBackwards
-	| marsRover |
-	marsRover := MarsRover facingSouthWithCoordinate: 0@0.
+	marsRoverFacingSouth executeCommands: 'bbbb'.
 	
-	marsRover executeCommands: 'bbbb'.
-	
-	self assert: (marsRover coordinate = (0@4)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingSouth coordinate = (0@4)).
+	self assert: (marsRoverFacingSouth orientation = #S)! !
 
-!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 18:32:40'!
 testSouthFacingMarsRoverProcessingSingleBOrderMovesAPositionBackwards
-	| marsRover |
-	marsRover := MarsRover facingSouthWithCoordinate: 0@0.
+	marsRoverFacingSouth executeCommands: 'b'.
 	
-	marsRover executeCommands: 'b'.
-	
-	self assert: (marsRover coordinate = (0@1)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingSouth coordinate = (0@1)).
+	self assert: (marsRoverFacingSouth orientation = #S)! !
 
-!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 18:32:48'!
 testSouthFacingMarsRoverProcessingSingleFOrderMovesAPositionForwards
-	| marsRover |
-	marsRover := MarsRover facingSouthWithCoordinate: 0@0.
+	marsRoverFacingSouth executeCommands: 'f'.
 	
-	marsRover executeCommands: 'f'.
-	
-	self assert: (marsRover coordinate = (0@-1)).
-	self assert: (marsRover orientation = #S)! !
+	self assert: (marsRoverFacingSouth coordinate = (0@-1)).
+	self assert: (marsRoverFacingSouth orientation = #S)! !
 
-!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 18:33:01'!
 testSouthFacingMarsRoverProcessingSingleLOrderShouldChangeOrientationToEast
-	| marsRover |
-	marsRover := MarsRover facingSouthWithCoordinate: 0@0.
+	marsRoverFacingSouth executeCommands: 'l'.
 	
-	marsRover executeCommands: 'l'.
-	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #E)! !
+	self assert: (marsRoverFacingSouth coordinate = (0@0)).
+	self assert: (marsRoverFacingSouth orientation = #E)! !
 
-!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 17:05:01'!
+!MarsRoverTests methodsFor: 'SouthFacingMarsRover' stamp: 'LR 6/7/2020 18:33:08'!
 testSouthFacingMarsRoverProcessingSingleROrderShouldChangeOrientationToWest
-	| marsRover |
-	marsRover := MarsRover facingSouthWithCoordinate: 0@0.
+	marsRoverFacingSouth executeCommands: 'r'.
 	
-	marsRover executeCommands: 'r'.
+	self assert: (marsRoverFacingSouth coordinate = (0@0)).
+	self assert: (marsRoverFacingSouth orientation = #W)! !
+
+
+!MarsRoverTests methodsFor: 'setUp/tearDown' stamp: 'LR 6/7/2020 18:38:59'!
+setUp
+
+	marsRoverFacingNorth := MarsRover facingNorthWithCoordinate: 0@0.
+	marsRoverFacingWest := MarsRover facingWestWithCoordinate: 0@0.
+	marsRoverFacingEast := MarsRover facingEastWithCoordinate: 0@0.	
+	marsRoverFacingSouth := MarsRover facingSouthWithCoordinate: 0@0.
 	
-	self assert: (marsRover coordinate = (0@0)).
-	self assert: (marsRover orientation = #W)! !
+	marsRoverToTest := MarsRover facingWestWithCoordinate: 4@5.
+	marsRoverToTestCoordinate := marsRoverToTest coordinate.
+	marsRoverToTestOrientation := marsRoverToTest orientation.! !
 
 
 !classDefinition: #Command category: #'Mars Rover'!
@@ -417,8 +340,9 @@ Command subclass: #NullCommand
 	poolDictionaries: ''
 	category: 'Mars Rover'!
 
-!NullCommand methodsFor: 'execution' stamp: 'LR 6/7/2020 17:40:07'!
-execute! !
+!NullCommand methodsFor: 'execution' stamp: 'LR 6/7/2020 18:42:57'!
+execute
+	marsRover nullCommand! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -477,7 +401,7 @@ canExecuteCommand: aChar
 
 !classDefinition: #MarsRover category: #'Mars Rover'!
 Object subclass: #MarsRover
-	instanceVariableNames: 'orientation position'
+	instanceVariableNames: 'position'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Mars Rover'!
@@ -512,6 +436,10 @@ executeCommands: aString
 !MarsRover methodsFor: 'commands' stamp: 'LR 6/7/2020 17:28:20'!
 forward
 	position forward.! !
+
+!MarsRover methodsFor: 'commands' stamp: 'LR 6/7/2020 18:43:09'!
+nullCommand
+! !
 
 !MarsRover methodsFor: 'commands' stamp: 'LR 6/7/2020 17:28:44'!
 rotateLeft
