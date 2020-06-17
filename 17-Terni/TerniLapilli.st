@@ -261,49 +261,33 @@ test19CanNotMoveOChipToAnInvalidPosition
 	on: Error
 	do: [self success:true].! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:23:43'!
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:45:13'!
 testIfAPlayerHasThreeOnARowTheGameIsOver
 	|game|
 	
-	game := TerniLapilli new.
-	"game putXAt: 0@0.
-	game putOAt: 1@0.
-	game putXAt: 0@1.
-	game putOAt: 1@1.	
-	game putXAt: 0@2."
+	"game := TerniLapilli new.
+	game putXAt: 1@1.
+	game putOAt: 2@1.
+	game putXAt: 1@2.
+	game putOAt: 2@2.	
+	game putXAt: 1@3.
 	
-	"self assert: game isOver."
+	self assert: game isOver."
 	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:23:53'!
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:45:34'!
 testIfXHasThreeOnARowXWins
 	|game|
 	
 	game := TerniLapilli new.
-	"game putXAt: 0@0.
-	game putOAt: 1@0.
-	game putXAt: 0@1.
-	game putOAt: 1@1.	
-	game putXAt: 0@2.
-	
-	self assert: game hasPlayerXWon."
-	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:31:31'!
-testXXXXCanMoveChipToAValidPosition
-	|game|
-	
-	"game := TerniLapilli new.
-	game putXAt: 1@1. 
+	game putXAt: 1@1.
 	game putOAt: 2@1.
-	
 	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
+	game putOAt: 2@2.	
+	game putXAt: 1@3.
 	
-	game moveXAt: 1@1 to: 2@1."! !
+	self assert: game hasPlayerXWon.
+	! !
 
 
 !classDefinition: #TerniLapilli category: #TerniLapilli!
@@ -355,42 +339,42 @@ isPlayingX
 isValidMove: sourcePoint to: destinationPoint 
 	^(validMoves at: sourcePoint) includes: destinationPoint.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:27:38'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:02'!
 moveOAt: sourcePosition to: destinationPosition
-	self isPlayingO ifFalse: [self error: 'its not your turn'].
-	(board at: sourcePosition) = #O ifFalse: [self error: 'cant move other chip'].
-	(board at: destinationPosition) = nil ifFalse: [self error: 'cant move chip to a taken position'].
-	(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: 'invalid move'].
+	self isPlayingO ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: sourcePosition) = #O ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: destinationPosition) = nil ifFalse: [self error: self class takenPositionErrorMessageDescription].
+	(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: self class invalidMovementErrorMessageDescription].
 	
 	board at: sourcePosition put: nil.
 	board at: destinationPosition put: #O.
 	player := #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:10:58'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:35:22'!
 moveXAt: sourcePosition to: destinationPosition
-	self isPlayingX ifFalse: [self error: 'its not your turn'].
-	(board at: sourcePosition) = #X ifFalse: [self error: 'cant move other chip'].
-	(board at: destinationPosition) = nil ifFalse: [self error: 'cant move chip to a taken position'].
-	(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: 'invalid move'].
+	self isPlayingX ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: sourcePosition) = #X ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: destinationPosition) = nil ifFalse: [self error: self class takenPositionErrorMessageDescription].
+	(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: self class invalidMovementErrorMessageDescription].
 	
 	board at: sourcePosition put: nil.
 	board at: destinationPosition put: #X.
 	player := #O.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:04:23'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:36:53'!
 putOAt: aPoint 
-	(player = #O) ifFalse: [self error: 'is not your turn'].
-	(self validPoint: aPoint)  ifFalse: [self error: 'invalid position'].
-	(playedChips  = 6) ifTrue: [self error: 'should move existing chips'].
+	(player = #O) ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(self validPoint: aPoint)  ifFalse: [self error: self class takenPositionErrorMessageDescription].
+	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
 	playedChips := playedChips +1 .
 	board at: aPoint put: #O.
 	player := #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:05:09'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:37:23'!
 putXAt: aPoint 
-	(player = #X) ifFalse: [self error: 'is not your turn'].
-	(self validPoint: aPoint)  ifFalse: [self error: 'invalid position'].
-	(playedChips  = 6) ifTrue: [self error: 'should move existing chips'].
+	(player = #X) ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(self validPoint: aPoint)  ifFalse: [self error: self class takenPositionErrorMessageDescription].
+	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
 	playedChips := playedChips+1.
 	board at: aPoint put: #X.
 	player := #O! !
@@ -398,3 +382,25 @@ putXAt: aPoint
 !TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 19:59:04'!
 validPoint: aPoint 
 	^(board at: aPoint) = nil.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TerniLapilli class' category: #TerniLapilli!
+TerniLapilli class
+	instanceVariableNames: ''!
+
+!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:19'!
+invalidMovementErrorMessageDescription
+	^'invalid movement'! !
+
+!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:37:08'!
+moveExistingChipsErrorMessageDescription
+	^'should move existing chips'! !
+
+!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:24'!
+notYourTurnErrorMessageDescription
+	^'its not your turn'! !
+
+!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:46'!
+takenPositionErrorMessageDescription
+	^'taken position'! !
