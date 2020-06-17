@@ -319,7 +319,7 @@ test23IfOHasThreeOnARowAfter3MovementsOWins
 	self assert: game hasPlayerOWon.
 	self deny: game hasPlayerXWon.	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:14:11'!
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:23:12'!
 test24IfXHasThreeOnADiagonalAfter3MovementsXWins
 	|game|
 	
@@ -329,7 +329,6 @@ test24IfXHasThreeOnADiagonalAfter3MovementsXWins
 	game putXAt: 2@2.
 	game putOAt: 2@3.	
 	game putXAt: 1@3.
-	game putOAt: 3@3.
 	
 	self assert: game hasPlayerXWon.
 	self deny: game hasPlayerOWon.	! !
@@ -349,19 +348,106 @@ test25IfOHasThreeOnADiagonalAfter3MovementsOWins
 	self deny: game hasPlayerXWon.
 	self assert: game hasPlayerOWon.	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:45:13'!
-testIfAPlayerHasThreeOnARowTheGameIsOver
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:20:33'!
+test26IfAPlayerHasThreeOnARowTheGameIsOver
 	|game|
 	
-	"game := TerniLapilli new.
+	game := TerniLapilli new.
 	game putXAt: 1@1.
 	game putOAt: 2@1.
 	game putXAt: 1@2.
 	game putOAt: 2@2.	
 	game putXAt: 1@3.
 	
-	self assert: game isOver."
+	self assert: game isOver.
 	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:23:35'!
+test27IfTheGameIsOverNobodyCanPutAnotherChip
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 1@1.
+	game putOAt: 2@1.
+	game putXAt: 1@2.
+	game putOAt: 2@2.	
+	game putXAt: 1@3.
+	
+	[game putOAt: 3@3. self fail.]
+	on: Error
+	do: [self success: true].
+	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:27:50'!
+test28IfXHasThreeOnARowInAnyPositionAfterMoreThan3MovementsXWins
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 1@1.
+	game putOAt: 2@1.
+	game putXAt: 1@2.
+	game putOAt: 3@2.	
+	game putXAt: 3@3.
+	game putOAt: 3@1.
+	
+	game moveXAt: 1@2 to: 2@2.
+	
+	self assert: game hasPlayerXWon.
+	self deny: game hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:29:29'!
+test29IfOHasThreeOnARowInAnyPositionAfterMoreThan3MovementsOWins
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 1@1.
+	game putOAt: 2@3.
+	game putXAt: 1@2.
+	game putOAt: 3@2.	
+	game putXAt: 3@3.
+	game putOAt: 3@1.
+	
+	game moveXAt: 3@3 to: 2@2.
+	game moveOAt: 2@3 to: 3@3.
+		
+	self deny: game hasPlayerXWon.
+	self assert: game hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:31:52'!
+test30IfTheGameIsOverXCanNotMoveAnotherChip
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 1@1.
+	game putOAt: 2@3.
+	game putXAt: 1@2.
+	game putOAt: 3@2.	
+	game putXAt: 3@3.
+	game putOAt: 3@1.
+	
+	game moveXAt: 3@3 to: 2@2.
+	game moveOAt: 2@3 to: 3@3.
+
+	[game moveXAt: 2@2 to: 1@3. self fail.]
+	on: Error
+	do: [self success:true].! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:32:35'!
+test31IfTheGameIsOverOCanNotMoveAnotherChip
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 1@1.
+	game putOAt: 2@3.
+	game putXAt: 1@2.
+	game putOAt: 3@2.	
+	game putXAt: 3@3.
+	game putOAt: 3@1.
+	
+	game moveXAt: 1@2 to: 2@2.
+	[game moveOAt: 2@3 to: 3@3. self fail.]
+	on: Error
+	do: [self success:true].! !
 
 
 !classDefinition: #TerniLapilli category: #TerniLapilli!
@@ -481,8 +567,9 @@ isPlayingX
 isValidMove: sourcePoint to: destinationPoint 
 	^(validMoves at: sourcePoint) includes: destinationPoint.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:02'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:29:48'!
 moveOAt: sourcePosition to: destinationPosition
+	(self isOver) ifTrue: [self error: self class gameOverErrorMessageDescription].
 	self isPlayingO ifFalse: [self error: self class notYourTurnErrorMessageDescription].
 	(board at: sourcePosition) = #O ifFalse: [self error: self class notYourTurnErrorMessageDescription].
 	(board at: destinationPosition) = nil ifFalse: [self error: self class takenPositionErrorMessageDescription].
@@ -490,10 +577,12 @@ moveOAt: sourcePosition to: destinationPosition
 	
 	board at: sourcePosition put: nil.
 	board at: destinationPosition put: #O.
+	self checkThreeOnARow.
 	player := #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:35:22'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:26:53'!
 moveXAt: sourcePosition to: destinationPosition
+	(self isOver) ifTrue: [self error: self class gameOverErrorMessageDescription].
 	self isPlayingX ifFalse: [self error: self class notYourTurnErrorMessageDescription].
 	(board at: sourcePosition) = #X ifFalse: [self error: self class notYourTurnErrorMessageDescription].
 	(board at: destinationPosition) = nil ifFalse: [self error: self class takenPositionErrorMessageDescription].
@@ -501,10 +590,13 @@ moveXAt: sourcePosition to: destinationPosition
 	
 	board at: sourcePosition put: nil.
 	board at: destinationPosition put: #X.
+	
+	self checkThreeOnARow.
 	player := #O.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:09:48'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:22:00'!
 putOAt: aPoint 
+	(self isOver) ifTrue: [self error: self class gameOverErrorMessageDescription].
 	(player = #O) ifFalse: [self error: self class notYourTurnErrorMessageDescription].
 	(self validPoint: aPoint)  ifFalse: [self error: self class takenPositionErrorMessageDescription].
 	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
@@ -513,8 +605,9 @@ putOAt: aPoint
 	self checkThreeOnARow.
 	player := #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:50:27'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:22:07'!
 putXAt: aPoint 
+	(self isOver) ifTrue: [self error: self class gameOverErrorMessageDescription].
 	(player = #X) ifFalse: [self error: self class notYourTurnErrorMessageDescription].
 	(self validPoint: aPoint)  ifFalse: [self error: self class takenPositionErrorMessageDescription].
 	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
@@ -532,6 +625,10 @@ validPoint: aPoint
 !classDefinition: 'TerniLapilli class' category: #TerniLapilli!
 TerniLapilli class
 	instanceVariableNames: ''!
+
+!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:22:38'!
+gameOverErrorMessageDescription
+	^'game is over'! !
 
 !TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:19'!
 invalidMovementErrorMessageDescription
