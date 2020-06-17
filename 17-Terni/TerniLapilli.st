@@ -187,21 +187,79 @@ test15CantMoveXChipIfIsOTurn
 	on: Error
 	do: [self success: true.]! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:26:46'!
-test16CanNotMoveChipToAnInvalidPosition
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:33:20'!
+test16CanNotMoveXChipToATakenPosition
 	|game|
 	
 	game := TerniLapilli new.
-"	game putXAt: 0@0. 
-	game putOAt: 1@0.
+	game putXAt: 1@1. 
+	game putOAt: 2@1.
 	
-	game putXAt: 0@1.
-	game putOAt: 0@2.
+	game putXAt: 1@2.
+	game putOAt: 1@3.
 
-	game putXAt: 1@1.
-	game putOAt: 1@2.
+	game putXAt: 2@2.
+	game putOAt: 2@3.
 	
-	game moveXAt: 1@1 to: 2@1."! !
+	[game moveXAt: 1@1 to: 1@2. self fail.]
+	on: Error
+	do: [self success: true.]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:34:22'!
+test17CanNotMoveOChipToATakenPosition
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 1@1. 
+	game putOAt: 2@1.
+	
+	game putXAt: 1@2.
+	game putOAt: 1@3.
+
+	game putXAt: 2@2.
+	game putOAt: 2@3.
+	
+	game moveXAt: 2@2 to: 3@3.
+	[game moveOAt: 2@1 to: 1@1. self fail.]
+	on: Error
+	do: [self success: true.]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:50:10'!
+test18CanNotMoveXChipToAnInvalidPosition
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 2@1. 
+	game putOAt: 1@1.
+	
+	game putXAt: 1@3.
+	game putOAt: 1@2.
+
+	game putXAt: 2@3.
+	game putOAt: 2@2.
+	
+	[game moveXAt: 2@3 to: 3@2. self fail.]
+	on: Error
+	do: [self success:true].! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:27:15'!
+test19CanNotMoveOChipToAnInvalidPosition
+	|game|
+	
+	game := TerniLapilli new.
+	game putXAt: 2@1. 
+	game putOAt: 1@1.
+	
+	game putXAt: 1@3.
+	game putOAt: 1@2.
+
+	game putXAt: 2@3.
+	game putOAt: 2@2.
+	
+	game moveXAt: 2@3 to: 3@3.
+	[game moveOAt: 1@2 to: 2@3. self fail.]
+	on: Error
+	do: [self success:true].! !
 
 !TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:23:43'!
 testIfAPlayerHasThreeOnARowTheGameIsOver
@@ -231,26 +289,26 @@ testIfXHasThreeOnARowXWins
 	self assert: game hasPlayerXWon."
 	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:24:08'!
-testXXXXCanNotMoveChipToAnInvalidPosition
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:31:31'!
+testXXXXCanMoveChipToAValidPosition
 	|game|
 	
-	game := TerniLapilli new.
-"	game putXAt: 0@0.
-	game putOAt: 0@1.
+	"game := TerniLapilli new.
+	game putXAt: 1@1. 
+	game putOAt: 2@1.
 	
-	game putXAt: 1@1.
-	game putOAt: 0@2.
+	game putXAt: 1@2.
+	game putOAt: 1@3.
 
-	game putXAt: 2@1.
-	game putOAt: 1@0.
+	game putXAt: 2@2.
+	game putOAt: 2@3.
 	
-	game moveXAt: 2@1 to: 1@2."! !
+	game moveXAt: 1@1 to: 2@1."! !
 
 
 !classDefinition: #TerniLapilli category: #TerniLapilli!
 Object subclass: #TerniLapilli
-	instanceVariableNames: 'player winner board playedChips'
+	instanceVariableNames: 'player winner board playedChips validMoves'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
@@ -259,11 +317,23 @@ Object subclass: #TerniLapilli
 hasPlayerXWon
 	^true.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:05:19'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:24:18'!
 initialize
 	player := #X.
 	board := Array2D height: 3 width: 3.
-	playedChips := 0.! !
+	playedChips := 0.
+	validMoves := Dictionary new.
+	validMoves at: 1@1 put: (Set withAll: {2@1. 2@2. 1@2.}).
+	validMoves at: 2@1 put: (Set withAll: {1@1. 2@2. 3@1.}).
+	validMoves at: 3@1 put: (Set withAll: {2@1. 3@2. 2@2.}).
+	
+	validMoves at: 1@2 put: (Set withAll: {1@1. 2@2. 1@3.}).
+	validMoves at: 2@2 put: (Set withAll: {1@1. 1@2. 1@3. 2@1. 2@3. 3@1. 3@2. 3@3.}).
+	validMoves at: 3@2 put: (Set withAll: {3@1. 3@3. 2@2.}).
+	
+	validMoves at: 1@3 put: (Set withAll: {1@2. 2@2. 2@3.}).
+	validMoves at: 2@3 put: (Set withAll: {1@3. 2@2. 3@3.}).
+	validMoves at: 3@3 put: (Set withAll: {2@3. 2@2. 3@2.}).! !
 
 !TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/11/2020 19:43:03'!
 isEmpty
@@ -281,20 +351,28 @@ isPlayingO
 isPlayingX
 	^player = #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:25:48'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:10:35'!
+isValidMove: sourcePoint to: destinationPoint 
+	^(validMoves at: sourcePoint) includes: destinationPoint.! !
+
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:27:38'!
 moveOAt: sourcePosition to: destinationPosition
-	"(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: 'invalid move']."
 	self isPlayingO ifFalse: [self error: 'its not your turn'].
 	(board at: sourcePosition) = #O ifFalse: [self error: 'cant move other chip'].
+	(board at: destinationPosition) = nil ifFalse: [self error: 'cant move chip to a taken position'].
+	(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: 'invalid move'].
+	
 	board at: sourcePosition put: nil.
 	board at: destinationPosition put: #O.
 	player := #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:25:34'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:10:58'!
 moveXAt: sourcePosition to: destinationPosition
-	"(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: 'invalid move']."
 	self isPlayingX ifFalse: [self error: 'its not your turn'].
 	(board at: sourcePosition) = #X ifFalse: [self error: 'cant move other chip'].
+	(board at: destinationPosition) = nil ifFalse: [self error: 'cant move chip to a taken position'].
+	(self isValidMove: sourcePosition to: destinationPosition) ifFalse: [self error: 'invalid move'].
+	
 	board at: sourcePosition put: nil.
 	board at: destinationPosition put: #X.
 	player := #O.! !
