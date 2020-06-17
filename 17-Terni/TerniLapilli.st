@@ -450,9 +450,90 @@ test31IfTheGameIsOverOCanNotMoveAnotherChip
 	do: [self success:true].! !
 
 
+!classDefinition: #Player category: #TerniLapilli!
+Object subclass: #Player
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!Player methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:09:23'!
+isPlayingO
+	self subclassResponsibility ! !
+
+!Player methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:09:22'!
+isPlayingX
+	self subclassResponsibility ! !
+
+!Player methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:09:27'!
+playO
+	self subclassResponsibility ! !
+
+!Player methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:09:25'!
+playX
+	self subclassResponsibility ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Player class' category: #TerniLapilli!
+Player class
+	instanceVariableNames: ''!
+
+!Player class methodsFor: 'errors' stamp: 'LR 6/17/2020 18:07:53'!
+notYourTurnErrorMessageDescription
+	^'its not your turn'! !
+
+
+!classDefinition: #PlayerO category: #TerniLapilli!
+Player subclass: #PlayerO
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!PlayerO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:04:43'!
+isPlayingO
+	^true! !
+
+!PlayerO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:04:48'!
+isPlayingX
+	^false! !
+
+!PlayerO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:08:14'!
+playO! !
+
+!PlayerO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:09:00'!
+playX
+	^self error: self class notYourTurnErrorMessageDescription! !
+
+
+!classDefinition: #PlayerX category: #TerniLapilli!
+Player subclass: #PlayerX
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!PlayerX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:08:23'!
+isPlayingO
+	^false! !
+
+!PlayerX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:08:27'!
+isPlayingX
+	^true! !
+
+!PlayerX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:09:05'!
+playO
+	^self error: self class notYourTurnErrorMessageDescription
+	! !
+
+!PlayerX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:08:34'!
+playX! !
+
+
 !classDefinition: #TerniLapilli category: #TerniLapilli!
 Object subclass: #TerniLapilli
-	instanceVariableNames: 'player winner board playedChips validMoves players playerIndex'
+	instanceVariableNames: 'player winner board playedChips validMoves players playerIndex playerX'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
@@ -534,9 +615,9 @@ isTaken: aPosition
 isValidMoveFrom: sourcePoint to: destinationPoint 
 	^(validMoves at: sourcePoint) includes: destinationPoint .! !
 
-!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 17:33:00'!
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 17:51:13'!
 move: aChip at: sourcePosition to: destinationPosition
-	(board at: sourcePosition) = aChip ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: sourcePosition) = aChip ifFalse: [self error: self class notYourChipPositionErrorMessageDescription].
 	(self isTaken: destinationPosition) ifTrue: [self error: self class takenPositionErrorMessageDescription].
 	(self isValidMoveFrom: sourcePosition to: destinationPosition) ifFalse: [self error: self class invalidMovementErrorMessageDescription].
 	
@@ -549,11 +630,10 @@ move: aChip at: sourcePosition to: destinationPosition
 nextPlayer
 	playerIndex := ((playerIndex + 1) \\ 2).! !
 
-!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 17:32:50'!
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 18:11:21'!
 put: aChip at: aPoint 
 	(self isTaken: aPoint) ifTrue: [self error: self class takenPositionErrorMessageDescription].
-	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
-	
+
 	playedChips := playedChips+1.
 	board at: aPoint put: aChip.
 	self finishTurn.! !
@@ -564,12 +644,16 @@ state
 	! !
 
 
-!TerniLapilli methodsFor: 'initialization' stamp: 'LR 6/16/2020 23:23:00'!
+!TerniLapilli methodsFor: 'initialization' stamp: 'LR 6/17/2020 18:10:40'!
 initialize
-	players := {#X. #O}.
+	players := Dictionary new.
+	players at: 0 put: PlayerX new.
+	players at: 1 put: PlayerO new.
 	playerIndex := 0.
+	
 	board := Array2D height: 3 width: 3.
 	playedChips := 0.
+	
 	validMoves := Dictionary new.
 	validMoves at: 1@1 put: (Set withAll: {2@1. 2@2. 1@2.}).
 	validMoves at: 2@1 put: (Set withAll: {1@1. 2@2. 3@1.}).
@@ -584,47 +668,56 @@ initialize
 	validMoves at: 3@3 put: (Set withAll: {2@3. 2@2. 3@2.}).! !
 
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:06:33'!
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:10:20'!
+moveOAt: sourcePosition to: destinationPosition
+	self player playO.
+	self state move: #O at: sourcePosition to: destinationPosition.! !
+
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:07:24'!
+moveXAt: sourcePosition to: destinationPosition
+	self player playX.
+	self state move: #X at: sourcePosition to: destinationPosition.! !
+
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:12:13'!
+putOAt: aPoint 
+	self player playO.
+	self state put: #O at: aPoint.! !
+
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:12:01'!
+putXAt: aPoint 
+	self player playX.
+	self state put: #X at: aPoint.! !
+
+
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/16/2020 22:06:33'!
 hasPlayerOWon
 	^winner = #O.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:06:25'!
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/16/2020 22:06:25'!
 hasPlayerXWon
 	^winner = #X.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:35:00'!
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/17/2020 17:35:00'!
 isOver
 	^self state isOver.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:36:40'!
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/17/2020 18:14:05'!
 isPlayingO
-	^self state isPlayingO! !
+	^self player isPlayingO! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:36:48'!
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/17/2020 18:14:10'!
 isPlayingX
-	^self state isPlayingX! !
+	^self player isPlayingX! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:33:19'!
-moveOAt: sourcePosition to: destinationPosition
-	self state moveOAt: sourcePosition to: destinationPosition.! !
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/17/2020 18:12:50'!
+playedChips
+	^playedChips! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:33:28'!
-moveXAt: sourcePosition to: destinationPosition
-	self state moveXAt: sourcePosition to: destinationPosition.! !
-
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 23:22:39'!
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/17/2020 17:52:06'!
 player
-	^players at: playerIndex+1.! !
+	^players at: playerIndex.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:27:59'!
-putOAt: aPoint 
-	self state putOAt: aPoint.! !
-
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:33:37'!
-putXAt: aPoint 
-	self state putXAt: aPoint.! !
-
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:43:04'!
+!TerniLapilli methodsFor: 'state' stamp: 'LR 6/17/2020 17:43:04'!
 winner
 	^winner! !
 
@@ -642,6 +735,10 @@ invalidMovementErrorMessageDescription
 moveExistingChipsErrorMessageDescription
 	^'should move existing chips'! !
 
+!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:51:01'!
+notYourChipPositionErrorMessageDescription
+	^'the chip you are trying to move is not yours'! !
+
 !TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:46'!
 takenPositionErrorMessageDescription
 	^'taken position'! !
@@ -654,37 +751,22 @@ Object subclass: #TerniLapilliState
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
 
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:39:59'!
+!TerniLapilliState methodsFor: 'initialization' stamp: 'LR 6/17/2020 17:39:59'!
 initializeFor: aTerniLapilli
 
 	game _ aTerniLapilli! !
 
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:40'!
+
+!TerniLapilliState methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 17:37:40'!
 isOver
 	self subclassResponsibility ! !
 
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:45'!
-isPlayingO
+!TerniLapilliState methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:13:30'!
+move: aChip at: aSourcePosition to: aDestinationPosition
 	self subclassResponsibility ! !
 
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:46'!
-isPlayingX
-	self subclassResponsibility ! !
-
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:38:10'!
-moveOAt: aSourcePosition to: aDestinationPosition
-	self subclassResponsibility ! !
-
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:38:12'!
-moveXAt: aSourcePosition to: aDestinationPosition
-	self subclassResponsibility ! !
-
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:56'!
-putOAt: aPosition
-	self subclassResponsibility ! !
-
-!TerniLapilliState methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:53'!
-putXAt: aPosition
+!TerniLapilliState methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:13:43'!
+put: aChip at: aPosition
 	self subclassResponsibility ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -693,28 +775,98 @@ putXAt: aPosition
 TerniLapilliState class
 	instanceVariableNames: ''!
 
-!TerniLapilliState class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:39:32'!
-canHandle: aTeriLapilli
-
-	self subclassResponsibility ! !
-
-!TerniLapilliState class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:39:14'!
+!TerniLapilliState class methodsFor: 'instance creation' stamp: 'LR 6/17/2020 17:39:14'!
 for: aTerniLapilli
 
 	^self new initializeFor: aTerniLapilli! !
 
-!TerniLapilliState class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:28:58'!
-gameOverErrorMessageDescription
-	^'game is over'! !
 
-!TerniLapilliState class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:29:16'!
-notYourTurnErrorMessageDescription
-	^'its not your turn'! !
+!TerniLapilliState class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:39:32'!
+canHandle: aTeriLapilli
 
-!TerniLapilliState class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:38:53'!
+	self subclassResponsibility ! !
+
+!TerniLapilliState class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:38:53'!
 stateFor: aTerniLapilli
 
 	^(self subclasses detect: [:aTerniLapilliStateClass | aTerniLapilliStateClass canHandle: aTerniLapilli ]) for: aTerniLapilli! !
+
+
+!TerniLapilliState class methodsFor: 'errors' stamp: 'LR 6/17/2020 17:28:58'!
+gameOverErrorMessageDescription
+	^'game is over'! !
+
+!TerniLapilliState class methodsFor: 'errors' stamp: 'LR 6/17/2020 17:59:23'!
+moveExistingChipsErrorMessageDescription
+	^'should move existing chips'! !
+
+!TerniLapilliState class methodsFor: 'errors' stamp: 'LR 6/17/2020 17:29:16'!
+notYourTurnErrorMessageDescription
+	^'its not your turn'! !
+
+!TerniLapilliState class methodsFor: 'errors' stamp: 'LR 6/17/2020 18:01:16'!
+putAllChipsErrorMessageDescription
+	^'should put all your chips in the board'! !
+
+
+!classDefinition: #TerniLapilliStateAllChipsSet category: #TerniLapilli!
+TerniLapilliState subclass: #TerniLapilliStateAllChipsSet
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!TerniLapilliStateAllChipsSet methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 17:35:41'!
+isOver
+	^false! !
+
+!TerniLapilliStateAllChipsSet methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 17:57:40'!
+move: aChip at: sourcePosition to: destinationPosition
+	^game move: aChip at: sourcePosition to: destinationPosition.! !
+
+!TerniLapilliStateAllChipsSet methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 17:59:42'!
+put: aChip at: aPosition
+	^self error: self class moveExistingChipsErrorMessageDescription.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TerniLapilliStateAllChipsSet class' category: #TerniLapilli!
+TerniLapilliStateAllChipsSet class
+	instanceVariableNames: ''!
+
+!TerniLapilliStateAllChipsSet class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:56:08'!
+canHandle: aTerniLapilli
+	^aTerniLapilli playedChips = 6.! !
+
+
+!classDefinition: #TerniLapilliStateNotAllChipsSet category: #TerniLapilli!
+TerniLapilliState subclass: #TerniLapilliStateNotAllChipsSet
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!TerniLapilliStateNotAllChipsSet methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 17:35:45'!
+isOver
+	^false! !
+
+!TerniLapilliStateNotAllChipsSet methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:01:33'!
+move: aChip at: sourcePosition to: destinationPosition
+	^self error: self class putAllChipsErrorMessageDescription.! !
+
+!TerniLapilliStateNotAllChipsSet methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:01:52'!
+put: aChip at: aPosition
+	^game put: aChip at: aPosition.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TerniLapilliStateNotAllChipsSet class' category: #TerniLapilli!
+TerniLapilliStateNotAllChipsSet class
+	instanceVariableNames: ''!
+
+!TerniLapilliStateNotAllChipsSet class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:56:20'!
+canHandle: aTerniLapilli
+	^aTerniLapilli playedChips < 6.! !
 
 
 !classDefinition: #TerniLapilliStateOver category: #TerniLapilli!
@@ -724,32 +876,16 @@ TerniLapilliState subclass: #TerniLapilliStateOver
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
 
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:35:36'!
+!TerniLapilliStateOver methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 17:35:36'!
 isOver
 	^true! !
 
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:36:59'!
-isPlayingO
-	^false! !
-
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:36:57'!
-isPlayingX
-	^false! !
-
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:30:07'!
-moveOAt: sourcePosition to: destinationPosition
+!TerniLapilliStateOver methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:02:18'!
+move: aChip at: sourcePosition to: destinationPosition
 	^self error: self class gameOverErrorMessageDescription! !
 
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:30:04'!
-moveXAt: sourcePosition to: destinationPosition
-	^self error: self class gameOverErrorMessageDescription! !
-
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:28:37'!
-putOAt: aPosition
-	^self error: self class gameOverErrorMessageDescription! !
-
-!TerniLapilliStateOver methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:29:36'!
-putXAt: aPosition
+!TerniLapilliStateOver methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:02:27'!
+put: aChip at: aPosition
 	^self error: self class gameOverErrorMessageDescription! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -758,98 +894,6 @@ putXAt: aPosition
 TerniLapilliStateOver class
 	instanceVariableNames: ''!
 
-!TerniLapilliStateOver class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:40:49'!
+!TerniLapilliStateOver class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:40:49'!
 canHandle: aTerniLapilli
 	^aTerniLapilli winner ~= nil! !
-
-
-!classDefinition: #TerniLapilliStatePlayingO category: #TerniLapilli!
-TerniLapilliState subclass: #TerniLapilliStatePlayingO
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TerniLapilli'!
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:35:41'!
-isOver
-	^false! !
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:16'!
-isPlayingO
-	^true! !
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:09'!
-isPlayingX
-	^false! !
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:30:46'!
-moveOAt: sourcePosition to: destinationPosition
-	^game move: #O at: sourcePosition to: destinationPosition! !
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:30:59'!
-moveXAt: sourcePosition to: destinationPosition
-	^self error: self class notYourTurnErrorMessageDescription ! !
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:31:24'!
-putOAt: aPosition
-	^game put: #O at: aPosition.! !
-
-!TerniLapilliStatePlayingO methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:31:10'!
-putXAt: aPosition
-	^self error: self class notYourTurnErrorMessageDescription ! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'TerniLapilliStatePlayingO class' category: #TerniLapilli!
-TerniLapilliStatePlayingO class
-	instanceVariableNames: ''!
-
-!TerniLapilliStatePlayingO class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:41:02'!
-canHandle: aTerniLapilli
-	^aTerniLapilli player = #O! !
-
-
-!classDefinition: #TerniLapilliStatePlayingX category: #TerniLapilli!
-TerniLapilliState subclass: #TerniLapilliStatePlayingX
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TerniLapilli'!
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:35:45'!
-isOver
-	^false! !
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:32'!
-isPlayingO
-	^false! !
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:37:27'!
-isPlayingX
-	^true! !
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:32:16'!
-moveOAt: sourcePosition to: destinationPosition
-	^self error: self class notYourTurnErrorMessageDescription ! !
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:32:00'!
-moveXAt: sourcePosition to: destinationPosition
-	^game move: #X at: sourcePosition to: destinationPosition! !
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:32:36'!
-putOAt: aPosition
-	^self error: self class notYourTurnErrorMessageDescription ! !
-
-!TerniLapilliStatePlayingX methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:32:27'!
-putXAt: aPosition
-	^game put: #X at: aPosition.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'TerniLapilliStatePlayingX class' category: #TerniLapilli!
-TerniLapilliStatePlayingX class
-	instanceVariableNames: ''!
-
-!TerniLapilliStatePlayingX class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:41:08'!
-canHandle: aTerniLapilli
-	^aTerniLapilli player = #X! !
