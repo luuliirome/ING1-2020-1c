@@ -547,10 +547,6 @@ initialize
 	validMoves at: 2@3 put: (Set withAll: {1@3. 2@2. 3@3.}).
 	validMoves at: 3@3 put: (Set withAll: {2@3. 2@2. 3@2.}).! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/11/2020 19:43:03'!
-isEmpty
-	^true! !
-
 !TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/11/2020 20:31:58'!
 isOver
 	^winner ~= nil! !
@@ -594,31 +590,29 @@ moveXAt: sourcePosition to: destinationPosition
 	self checkThreeOnARow.
 	player := #O.! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:22:00'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:38:11'!
 putOAt: aPoint 
 	(self isOver) ifTrue: [self error: self class gameOverErrorMessageDescription].
-	(player = #O) ifFalse: [self error: self class notYourTurnErrorMessageDescription].
-	(self validPoint: aPoint)  ifFalse: [self error: self class takenPositionErrorMessageDescription].
+	self isPlayingO ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: aPoint) = nil ifFalse: [self error: self class takenPositionErrorMessageDescription].
 	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
+	
 	playedChips := playedChips +1 .
 	board at: aPoint put: #O.
 	self checkThreeOnARow.
 	player := #X! !
 
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:22:07'!
+!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:38:05'!
 putXAt: aPoint 
 	(self isOver) ifTrue: [self error: self class gameOverErrorMessageDescription].
-	(player = #X) ifFalse: [self error: self class notYourTurnErrorMessageDescription].
-	(self validPoint: aPoint)  ifFalse: [self error: self class takenPositionErrorMessageDescription].
+	self isPlayingX ifFalse: [self error: self class notYourTurnErrorMessageDescription].
+	(board at: aPoint) = nil ifFalse: [self error: self class takenPositionErrorMessageDescription].
 	(playedChips  = 6) ifTrue: [self error: self class moveExistingChipsErrorMessageDescription].
+	
 	playedChips := playedChips+1.
 	board at: aPoint put: #X.
 	self checkThreeOnARow.
 	player := #O! !
-
-!TerniLapilli methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 19:59:04'!
-validPoint: aPoint 
-	^(board at: aPoint) = nil.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
