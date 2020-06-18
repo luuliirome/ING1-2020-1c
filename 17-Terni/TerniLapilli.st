@@ -1,453 +1,513 @@
 !classDefinition: #TerniLapilliTests category: #TerniLapilli!
 TestCase subclass: #TerniLapilliTests
+	instanceVariableNames: 'newGame'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!TerniLapilliTests methodsFor: 'setUp/tearDown' stamp: 'LR 6/17/2020 20:34:36'!
+setUp	
+	newGame := TerniLapilli new.! !
+
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:38:44'!
+play: aGameToPlay
+	aGameToPlay putXAt: 1@1.
+	aGameToPlay putOAt: 3@1.
+	aGameToPlay putXAt: 2@1.
+	aGameToPlay putOAt: 3@2.
+	aGameToPlay putXAt: 2@2.
+	aGameToPlay putOAt: 1@2.
+	^aGameToPlay! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:56:23'!
+winOByMoving: aGameForOToWin
+	aGameForOToWin putXAt: 1@1.
+	aGameForOToWin putOAt: 2@3.
+	aGameForOToWin putXAt: 1@2.
+	aGameForOToWin putOAt: 3@2.	
+	aGameForOToWin putXAt: 3@3.
+	aGameForOToWin putOAt: 3@1.
+	
+	aGameForOToWin moveXAt: 3@3 to: 2@2.
+	aGameForOToWin moveOAt: 2@3 to: 3@3.
+	
+	^aGameForOToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:47:38'!
+winOByPuttingThreeOnAColumn: aGameForOToWin
+	aGameForOToWin putXAt: 1@1.
+	aGameForOToWin putOAt: 2@1.
+	aGameForOToWin putXAt: 1@2.
+	aGameForOToWin putOAt: 2@2.	
+	aGameForOToWin putXAt: 3@3.
+	aGameForOToWin putOAt: 2@3.	
+	
+	^aGameForOToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:53:11'!
+winOByPuttingThreeOnADiagonal: aGameForOToWin 
+	
+	aGameForOToWin putXAt: 3@1.
+	aGameForOToWin putOAt: 1@1.
+	aGameForOToWin putXAt: 2@3.
+	aGameForOToWin putOAt: 2@2.	
+	aGameForOToWin putXAt: 1@3.
+	aGameForOToWin putOAt: 3@3.
+	
+	^aGameForOToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:49:24'!
+winOByPuttingThreeOnARow: aGameForOToWin 
+	
+	aGameForOToWin putXAt: 1@2.
+	aGameForOToWin putOAt: 3@3.
+	aGameForOToWin putXAt: 2@1.
+	aGameForOToWin putOAt: 2@3.	
+	aGameForOToWin putXAt: 3@1.
+	aGameForOToWin putOAt: 1@3.
+	
+	^aGameForOToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 21:04:23'!
+winXByMoving: aGameForXToWin
+	aGameForXToWin putXAt: 1@1.
+	aGameForXToWin putOAt: 2@1.
+	aGameForXToWin putXAt: 1@2.
+	aGameForXToWin putOAt: 3@2.	
+	aGameForXToWin putXAt: 3@3.
+	aGameForXToWin putOAt: 1@3.
+	
+	aGameForXToWin moveXAt: 1@2 to: 2@2.
+	
+	^aGameForXToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:47:51'!
+winXByPuttingThreeOnAColumn: aGameForXToWin
+	aGameForXToWin putXAt: 1@1.
+	aGameForXToWin putOAt: 2@1.
+	aGameForXToWin putXAt: 1@2.
+	aGameForXToWin putOAt: 2@2.	
+	aGameForXToWin putXAt: 1@3.
+	
+	^aGameForXToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:51:42'!
+winXByPuttingThreeOnADiagonal: aGameForXToWin 
+	
+	aGameForXToWin putXAt: 3@1.
+	aGameForXToWin putOAt: 1@2.
+	aGameForXToWin putXAt: 2@2.
+	aGameForXToWin putOAt: 2@3.	
+	aGameForXToWin putXAt: 1@3.
+	
+	^aGameForXToWin
+	! !
+
+!TerniLapilliTests methodsFor: 'testing - private' stamp: 'LR 6/17/2020 20:48:53'!
+winXByPuttingThreeOnARow: aGameForXToWin 
+	
+	aGameForXToWin putXAt: 1@1.
+	aGameForXToWin putOAt: 3@3.
+	aGameForXToWin putXAt: 2@1.
+	aGameForXToWin putOAt: 2@2.	
+	aGameForXToWin putXAt: 3@1.
+	
+	^aGameForXToWin
+	! !
+
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:11:44'!
+test01GameIsNotOverIfNeverStarted
+	self deny: (newGame isOver)! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:12:17'!
+test02XStartsTheGame
+	self assert: (newGame isPlayingX)! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:12:30'!
+test03ODoesNotStartTheGame
+	self deny: (newGame isPlayingO)! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:21:40'!
+test04PutAChipInAnInvalidPositionWillRaiseAnError
+	
+	self should: [newGame putXAt: 4@1]
+	raise: Error
+	withMessageText: TerniLapilli pointOutOfBoundErrorMsg.! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:35:53'!
+test05MoveAChipFromAnInvalidPositionWillRaiseAnError
+	|aStartedGame|
+
+	aStartedGame := self play: newGame.
+			
+	[aStartedGame moveXAt: 0@1 to: 1@2.self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = TerniLapilli pointOutOfBoundErrorMsg ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:36:08'!
+test05MoveAChipToAnInvalidPositionWillRaiseAnError
+	| aStartedGame |
+
+	aStartedGame := self play: newGame.
+			
+	[aStartedGame moveXAt: 1@1 to: 8@2.self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = TerniLapilli pointOutOfBoundErrorMsg ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:13:25'!
+test06OCantPlayIfIsXTurn
+	[newGame putOAt: 1@1. self fail.]
+	on: Error 
+	do: [ :anError | self assert: anError messageText = PlayerX notYourTurnErrorMessageDescription]
+	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:13:37'!
+test07XCantPlayIfIsOTurn
+	newGame putXAt: 1@1.
+	[newGame putXAt: 2@1. self fail.]
+	on: Error 
+	do: [ :anError | self assert: anError messageText = PlayerO notYourTurnErrorMessageDescription ]
+	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:13:46'!
+test08AfterXIsOTurn
+	newGame putXAt: 1@1.
+	self deny: (newGame isPlayingX).
+	self assert: (newGame isPlayingO).! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:13:57'!
+test09AfterOIsXTurn
+	newGame putXAt: 2@1.
+	newGame putOAt: 1@1.
+	self assert: (newGame isPlayingX).
+	self deny: (newGame isPlayingO).! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:14:05'!
+test10CantPutAChipInATakenSpace
+	newGame putXAt: 1@1.
+	[newGame putOAt: 1@1. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = CellState cellNotEmptyErrorMsg ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:14:14'!
+test11CantMoveAChipIfBoardIsNotFull
+	newGame putXAt: 1@1.
+	newGame putOAt: 2@1. 
+	
+	[newGame moveXAt: 1@1 to: 1@2. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = TerniLapilliState putAllChipsErrorMessageDescription ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:36:32'!
+test12AfterAll6ChipsInTheBoardOnlyCanMovePreviousChips
+	| aStartedGame |
+	aStartedGame := self play: newGame.
+	
+	[aStartedGame putXAt: 3@2. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = TerniLapilliState moveExistingChipsErrorMessageDescription ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:36:47'!
+test13CantMoveXChipIfSourcePositionIsFilledByAnOChip
+	|aStartedGame|
+	
+	aStartedGame := self play: newGame.
+	
+	[aStartedGame moveXAt: 3@2 to: 3@3. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = CellState cellNotTakenByXErrorMsg ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:37:03'!
+test14CantMoveOChipIfSourcePositionIsFilledByAnXChip
+	| aStartedGame |
+	
+	aStartedGame := self play: newGame.
+	aStartedGame moveXAt: 2@2 to: 2@3.
+	[aStartedGame moveOAt: 2@3 to: 3@3. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = CellState cellNotTakenByOErrorMsg ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:37:54'!
+test15CantMoveOChipIfIsXTurn
+	| aStartedGame |
+	
+	aStartedGame := self play: newGame.
+	[aStartedGame moveOAt: 2@1 to: 3@1. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = PlayerX notYourTurnErrorMessageDescription ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:40:25'!
+test16CantMoveXChipIfIsOTurn
+	| aStartedGame |
+	
+	aStartedGame := self play: newGame.
+	
+	aStartedGame moveXAt: 2@2 to: 2@3.
+	[aStartedGame moveXAt: 2@3 to: 3@3. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = PlayerO notYourTurnErrorMessageDescription ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:41:09'!
+test17CanNotMoveAChipToATakenPosition
+	| aStartedGame |
+	
+	aStartedGame := self play: newGame.
+	
+	[aStartedGame moveXAt: 1@1 to: 1@2. self fail.]
+	on: Error
+	do: [:anError | self assert: anError messageText = CellState cellNotEmptyErrorMsg ]! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:47:51'!
+test20IfXHasThreeOnAColumnAfter3MovementsXWins
+	| aGameWonByX |
+	
+	aGameWonByX := self winXByPuttingThreeOnAColumn: newGame.
+	
+	self assert: aGameWonByX hasPlayerXWon.
+	self deny: aGameWonByX hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:47:38'!
+test21IfOHasThreeOnAColumnAfter3MovementsOWins
+	| aGameWonByO |
+	
+	aGameWonByO := self winOByPuttingThreeOnAColumn: newGame.	
+	
+	self deny: aGameWonByO hasPlayerXWon.
+	self assert: aGameWonByO hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:50:10'!
+test22IfXHasThreeOnARowAfter3MovementsXWins
+	| aGameWonByX |
+	
+	aGameWonByX := self winXByPuttingThreeOnARow: newGame.
+	self assert: aGameWonByX hasPlayerXWon.
+	self deny: aGameWonByX hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:51:15'!
+test23IfOHasThreeOnARowAfter3MovementsOWins
+	| aGameWonByO |
+	
+	aGameWonByO := self winOByPuttingThreeOnARow: newGame.	
+	self assert: aGameWonByO hasPlayerOWon.
+	self deny: aGameWonByO hasPlayerXWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:52:22'!
+test24IfXHasThreeOnADiagonalAfter3MovementsXWins
+
+	| aGameWonByX |
+	
+	aGameWonByX := self winXByPuttingThreeOnADiagonal: newGame.
+	self assert: aGameWonByX hasPlayerXWon.
+	self deny: aGameWonByX hasPlayerOWon.		! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:52:49'!
+test25IfOHasThreeOnADiagonalAfter3MovementsOWins
+	| aGameWonByO |
+	
+	aGameWonByO := self winOByPuttingThreeOnADiagonal: newGame.
+	self assert: aGameWonByO hasPlayerOWon.
+	self deny: aGameWonByO hasPlayerXWon.! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:53:53'!
+test26IfAPlayerHasThreeOnARowTheGameIsOver
+	| aGameWonByO |
+	aGameWonByO := self winOByPuttingThreeOnAColumn: newGame.
+	self assert: aGameWonByO isOver.
+	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:59:01'!
+test27IfTheGameIsOverNobodyCanPutAnotherChip
+	| aGameWonByX |
+	aGameWonByX := self winXByPuttingThreeOnAColumn: newGame.	
+	
+	self should: [aGameWonByX putOAt: 3@3.]
+	raise: Error
+	withMessageText: TerniLapilliState gameOverErrorMessageDescription.
+	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:55:22'!
+test28IfXHasThreeOnARowInAnyPositionAfterMoreThan3MovementsXWins
+	| aGameWonByX |
+	aGameWonByX := self winXByMoving: newGame. 
+	
+	self assert: aGameWonByX hasPlayerXWon.
+	self deny: aGameWonByX hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 20:56:04'!
+test29IfOHasThreeOnARowInAnyPositionAfterMoreThan3MovementsOWins
+	| aGameWonByO |
+	aGameWonByO := self winOByMoving: newGame. 
+		
+	self deny: aGameWonByO hasPlayerXWon.
+	self assert: aGameWonByO hasPlayerOWon.	! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 21:02:07'!
+test30IfTheGameIsOverXCanNotMoveAnotherChip
+	| aGameWonByO |
+	
+	aGameWonByO := self winOByMoving: newGame.
+	self should: [aGameWonByO moveXAt: 2@2 to: 2@3.]
+	raise: Error
+	withMessageText: TerniLapilliState gameOverErrorMessageDescription.! !
+
+!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 21:05:06'!
+test31IfTheGameIsOverOCanNotMoveAnotherChip
+	| aGameWinByX |
+	
+	aGameWinByX := self winXByMoving: newGame.
+	self should: [aGameWinByX moveOAt: 1@3 to: 1@2.]
+	raise: Error
+	withMessageText: TerniLapilliState gameOverErrorMessageDescription.! !
+
+
+!classDefinition: #CellState category: #TerniLapilli!
+Object subclass: #CellState
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/11/2020 20:52:38'!
-test01GameIsNotOverIfNeverStarted
-	|game|
-	
-	game := TerniLapilli new.
-	self deny: (game isOver)! !
+!CellState methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 19:40:54'!
+put
+	self subclassResponsibility ! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/11/2020 20:52:58'!
-test02XStartsTheGame
-	|game|
-	
-	game := TerniLapilli new.
-	self assert: (game isPlayingX)! !
+!CellState methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 19:41:06'!
+takenByO
+	self subclassResponsibility ! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/11/2020 20:53:06'!
-test03ODoesNotStartTheGame
-	|game|
-	
-	game := TerniLapilli new.
-	self deny: (game isPlayingO)! !
+!CellState methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 19:41:05'!
+takenByX
+	self subclassResponsibility ! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:00:26'!
-test04PutXInAnInvalidPositionWillRaiseAnError
-	|game|
-	
-	game := TerniLapilli new.
-	[game putXAt: 4@1. self fail.]
-	on: Error 
-	do: [self success: true.]! !
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:00:32'!
-test05PutOInAnInvalidPositionWillRaiseAnError
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	[game putOAt: 4@1. self fail.]
-	on: Error 
-	do: [self success: true.]! !
+!classDefinition: 'CellState class' category: #TerniLapilli!
+CellState class
+	instanceVariableNames: ''!
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:00:48'!
-test06OCantPlayIfIsXTurn
-	|game|
-	
-	game := TerniLapilli new.
-	[game putOAt: 1@1. self fail.]
-	on: Error 
-	do: [ self success: true. ]
+!CellState class methodsFor: 'errors' stamp: 'LR 6/17/2020 19:37:53'!
+cellNotEmptyErrorMsg
+	^'cell not empty'! !
+
+!CellState class methodsFor: 'errors' stamp: 'LR 6/17/2020 19:38:19'!
+cellNotTakenByOErrorMsg
+	^'cell not taken by O'! !
+
+!CellState class methodsFor: 'errors' stamp: 'LR 6/17/2020 19:38:37'!
+cellNotTakenByXErrorMsg
+	^'cell not taken by X'! !
+
+!CellState class methodsFor: 'errors' stamp: 'LR 6/17/2020 19:38:48'!
+cellNotTakenErrorMsg
+	^'cell empty'! !
+
+
+!CellState class methodsFor: 'state selection' stamp: 'LR 6/17/2020 19:37:09'!
+canHandle: aCell
+	self subclassResponsibility ! !
+
+!CellState class methodsFor: 'state selection' stamp: 'LR 6/17/2020 19:12:35'!
+stateFor: aCellContent
+
+	^(self subclasses detect: [:aCellStateClass | aCellStateClass canHandle: aCellContent ]) new.! !
+
+
+!classDefinition: #CellStateEmpty category: #TerniLapilli!
+CellState subclass: #CellStateEmpty
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!CellStateEmpty methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:58:03'!
+put
 	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:00:57'!
-test07XCantPlayIfIsOTurn
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	[game putXAt: 2@1. self fail.]
-	on: Error 
-	do: [ self success: true. ]
+!CellStateEmpty methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:58:35'!
+takenByO
+	^self error: self class cellNotTakenErrorMsg! !
+
+!CellStateEmpty methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:58:39'!
+takenByX
+	^self error: self class cellNotTakenErrorMsg! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CellStateEmpty class' category: #TerniLapilli!
+CellStateEmpty class
+	instanceVariableNames: ''!
+
+!CellStateEmpty class methodsFor: 'state selection' stamp: 'LR 6/17/2020 19:13:19'!
+canHandle: aCellContent
+	^aCellContent = nil! !
+
+
+!classDefinition: #CellStateTakenByO category: #TerniLapilli!
+CellState subclass: #CellStateTakenByO
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
+
+!CellStateTakenByO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 19:00:21'!
+put
+	^self error: self class cellNotEmptyErrorMsg! !
+
+!CellStateTakenByO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:50:04'!
+takenByO
 	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:01:05'!
-test08AfterXIsOTurn
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	self deny: (game isPlayingX).
-	self assert: (game isPlayingO).! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:01:14'!
-test09AfterOIsXTurn
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 2@1.
-	game putOAt: 1@1.
-	self assert: (game isPlayingX).
-	self deny: (game isPlayingO).! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:01:25'!
-test10CantPutAChipInATakenSpace
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	[game putOAt: 1@1. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:01:52'!
-test11AfterAll6ChipsInTheBoardOnlyCanMovePreviousChips
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
-	
-	[game putXAt: 3@2. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:21:46'!
-test12CantMoveXChipIfSourcePositionIsFilledByAnOChip
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1. 
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
-	
-	[game moveXAt: 2@3 to: 3@3. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:22:13'!
-test13CantMoveOChipIfSourcePositionIsFilledByAnXChip
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1. 
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
-	
-	game moveXAt: 2@2 to: 3@2.
-	[game moveOAt: 3@2 to: 3@3. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:22:53'!
-test14CantMoveOChipIfIsXTurn
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1. 
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
-	
-	[game moveOAt: 2@1 to: 3@1. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:21:14'!
-test15CantMoveXChipIfIsOTurn
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1. 
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3. 
-	
-	game moveXAt: 2@2 to: 3@2.
-	[game moveXAt: 3@2 to: 3@3. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:33:20'!
-test16CanNotMoveXChipToATakenPosition
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1. 
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
-	
-	[game moveXAt: 1@1 to: 1@2. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:34:22'!
-test17CanNotMoveOChipToATakenPosition
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1. 
-	game putOAt: 2@1.
-	
-	game putXAt: 1@2.
-	game putOAt: 1@3.
-
-	game putXAt: 2@2.
-	game putOAt: 2@3.
-	
-	game moveXAt: 2@2 to: 3@3.
-	[game moveOAt: 2@1 to: 1@1. self fail.]
-	on: Error
-	do: [self success: true.]! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 20:50:10'!
-test18CanNotMoveXChipToAnInvalidPosition
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 2@1. 
-	game putOAt: 1@1.
-	
-	game putXAt: 1@3.
-	game putOAt: 1@2.
-
-	game putXAt: 2@3.
-	game putOAt: 2@2.
-	
-	[game moveXAt: 2@3 to: 3@2. self fail.]
-	on: Error
-	do: [self success:true].! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:27:15'!
-test19CanNotMoveOChipToAnInvalidPosition
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 2@1. 
-	game putOAt: 1@1.
-	
-	game putXAt: 1@3.
-	game putOAt: 1@2.
-
-	game putXAt: 2@3.
-	game putOAt: 2@2.
-	
-	game moveXAt: 2@3 to: 3@3.
-	[game moveOAt: 1@2 to: 2@3. self fail.]
-	on: Error
-	do: [self success:true].! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:10:13'!
-test20IfXHasThreeOnAColumnAfter3MovementsXWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@1.
-	game putXAt: 1@2.
-	game putOAt: 2@2.	
-	game putXAt: 1@3.
-	
-	self assert: game hasPlayerXWon.
-	self deny: game hasPlayerOWon.	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:10:23'!
-test21IfOHasThreeOnAColumnAfter3MovementsOWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@1.
-	game putXAt: 1@2.
-	game putOAt: 2@2.	
-	game putXAt: 3@3.
-	game putOAt: 2@3.	
-	
-	self deny: game hasPlayerXWon.
-	self assert: game hasPlayerOWon.	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:11:20'!
-test22IfXHasThreeOnARowAfter3MovementsXWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 3@3.
-	game putXAt: 2@1.
-	game putOAt: 2@2.	
-	game putXAt: 3@1.
-	
-	self assert: game hasPlayerXWon.
-	self deny: game hasPlayerOWon.	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:12:31'!
-test23IfOHasThreeOnARowAfter3MovementsOWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@2.
-	game putOAt: 3@3.
-	game putXAt: 2@1.
-	game putOAt: 2@3.	
-	game putXAt: 3@1.
-	game putOAt: 1@3.
-	
-	self assert: game hasPlayerOWon.
-	self deny: game hasPlayerXWon.	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:23:12'!
-test24IfXHasThreeOnADiagonalAfter3MovementsXWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 3@1.
-	game putOAt: 1@2.
-	game putXAt: 2@2.
-	game putOAt: 2@3.	
-	game putXAt: 1@3.
-	
-	self assert: game hasPlayerXWon.
-	self deny: game hasPlayerOWon.	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:18:43'!
-test25IfOHasThreeOnADiagonalAfter3MovementsOWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 3@1.
-	game putOAt: 1@1.
-	game putXAt: 2@3.
-	game putOAt: 2@2.	
-	game putXAt: 1@3.
-	game putOAt: 3@3.
-	
-	self deny: game hasPlayerXWon.
-	self assert: game hasPlayerOWon.	! !
-
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:20:33'!
-test26IfAPlayerHasThreeOnARowTheGameIsOver
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@1.
-	game putXAt: 1@2.
-	game putOAt: 2@2.	
-	game putXAt: 1@3.
-	
-	self assert: game isOver.
+!CellStateTakenByO methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:59:20'!
+takenByX
+	self error: self class cellNotTakenByXErrorMsg
 	! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:23:35'!
-test27IfTheGameIsOverNobodyCanPutAnotherChip
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@1.
-	game putXAt: 1@2.
-	game putOAt: 2@2.	
-	game putXAt: 1@3.
-	
-	[game putOAt: 3@3. self fail.]
-	on: Error
-	do: [self success: true].
-	! !
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:27:50'!
-test28IfXHasThreeOnARowInAnyPositionAfterMoreThan3MovementsXWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@1.
-	game putXAt: 1@2.
-	game putOAt: 3@2.	
-	game putXAt: 3@3.
-	game putOAt: 3@1.
-	
-	game moveXAt: 1@2 to: 2@2.
-	
-	self assert: game hasPlayerXWon.
-	self deny: game hasPlayerOWon.	! !
+!classDefinition: 'CellStateTakenByO class' category: #TerniLapilli!
+CellStateTakenByO class
+	instanceVariableNames: ''!
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:29:29'!
-test29IfOHasThreeOnARowInAnyPositionAfterMoreThan3MovementsOWins
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@3.
-	game putXAt: 1@2.
-	game putOAt: 3@2.	
-	game putXAt: 3@3.
-	game putOAt: 3@1.
-	
-	game moveXAt: 3@3 to: 2@2.
-	game moveOAt: 2@3 to: 3@3.
-		
-	self deny: game hasPlayerXWon.
-	self assert: game hasPlayerOWon.	! !
+!CellStateTakenByO class methodsFor: 'state selection' stamp: 'LR 6/17/2020 19:13:33'!
+canHandle: aCellContent
+	^aCellContent = #O! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:31:52'!
-test30IfTheGameIsOverXCanNotMoveAnotherChip
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@3.
-	game putXAt: 1@2.
-	game putOAt: 3@2.	
-	game putXAt: 3@3.
-	game putOAt: 3@1.
-	
-	game moveXAt: 3@3 to: 2@2.
-	game moveOAt: 2@3 to: 3@3.
+
+!classDefinition: #CellStateTakenByX category: #TerniLapilli!
+CellState subclass: #CellStateTakenByX
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TerniLapilli'!
 
-	[game moveXAt: 2@2 to: 1@3. self fail.]
-	on: Error
-	do: [self success:true].! !
+!CellStateTakenByX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 19:00:10'!
+put
+	^self error: self class cellNotEmptyErrorMsg! !
 
-!TerniLapilliTests methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 22:32:35'!
-test31IfTheGameIsOverOCanNotMoveAnotherChip
-	|game|
-	
-	game := TerniLapilli new.
-	game putXAt: 1@1.
-	game putOAt: 2@3.
-	game putXAt: 1@2.
-	game putOAt: 3@2.	
-	game putXAt: 3@3.
-	game putOAt: 3@1.
-	
-	game moveXAt: 1@2 to: 2@2.
-	[game moveOAt: 2@3 to: 3@3. self fail.]
-	on: Error
-	do: [self success:true].! !
+!CellStateTakenByX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:59:42'!
+takenByO
+	^self error: self class cellNotTakenByOErrorMsg! !
+
+!CellStateTakenByX methodsFor: 'ternilapilli operations' stamp: 'LR 6/17/2020 18:59:49'!
+takenByX! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CellStateTakenByX class' category: #TerniLapilli!
+CellStateTakenByX class
+	instanceVariableNames: ''!
+
+!CellStateTakenByX class methodsFor: 'state selection' stamp: 'LR 6/17/2020 19:13:47'!
+canHandle: aCellContent
+	^aCellContent = #X! !
 
 
 !classDefinition: #Player category: #TerniLapilli!
@@ -533,10 +593,15 @@ playX! !
 
 !classDefinition: #TerniLapilli category: #TerniLapilli!
 Object subclass: #TerniLapilli
-	instanceVariableNames: 'player winner board playedChips validMoves players playerIndex playerX'
+	instanceVariableNames: 'player winner board playedChips validMoves players playerIndex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TerniLapilli'!
+
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:12:27'!
+cell: aCellContent
+	^CellState stateFor: aCellContent
+	! !
 
 !TerniLapilli methodsFor: 'private' stamp: 'LR 6/16/2020 21:58:22'!
 checkAllColumns
@@ -574,6 +639,10 @@ checkAllRows
 		index := index + 1.
 	]! !
 
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:32:05'!
+checkCellEmpty: destinationPosition
+	(self cell: (board at: destinationPosition)) put.! !
+
 !TerniLapilli methodsFor: 'private' stamp: 'LR 6/16/2020 22:09:17'!
 checkColumnNumber: columnNumber 
 	| firstElement secondElement thirdElement |
@@ -584,6 +653,14 @@ checkColumnNumber: columnNumber
 
 	((firstElement = secondElement) and: (secondElement = thirdElement) and: (thirdElement ~= nil))
 	ifTrue: [winner := firstElement].! !
+
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:22:55'!
+checkPlayerOTurn
+	self player playO.! !
+
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:22:50'!
+checkPlayerXTurn
+	self player playX.! !
 
 !TerniLapilli methodsFor: 'private' stamp: 'LR 6/16/2020 22:04:30'!
 checkRowNumber: rowNumber 
@@ -596,33 +673,40 @@ checkRowNumber: rowNumber
 	((firstElement = secondElement) and: (secondElement = thirdElement) and: (thirdElement ~= nil))
 	ifTrue: [winner := firstElement].! !
 
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:29:18'!
+checkSourceO: sourcePosition
+	(self cell: (board at: sourcePosition)) takenByO.! !
+
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:29:13'!
+checkSourceX: sourcePosition
+	(self cell: (board at: sourcePosition)) takenByX.! !
+
 !TerniLapilli methodsFor: 'private' stamp: 'LR 6/16/2020 21:52:05'!
 checkThreeOnARow
 	self checkAllColumns.
 	self checkAllRows.
 	self checkAllDiagonals.! !
 
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:51:23'!
+checkValidPosition: aPoint 
+	(aPoint x < 1 or: aPoint y < 1 or: aPoint x > 3 or: aPoint y > 3) ifTrue: [self error: self class pointOutOfBoundErrorMsg]! !
+
 !TerniLapilli methodsFor: 'private' stamp: 'LR 6/16/2020 23:16:05'!
 finishTurn
 	self checkThreeOnARow.
 	self nextPlayer.! !
 
-!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 17:06:50'!
-isTaken: aPosition
-	^(board at: aPosition) ~= nil! !
-
-!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 17:06:22'!
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:19:35'!
 isValidMoveFrom: sourcePoint to: destinationPoint 
-	^(validMoves at: sourcePoint) includes: destinationPoint .! !
+	^(validMoves at: sourcePoint) includes: destinationPoint.! !
 
-!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 17:51:13'!
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 20:08:36'!
 move: aChip at: sourcePosition to: destinationPosition
-	(board at: sourcePosition) = aChip ifFalse: [self error: self class notYourChipPositionErrorMessageDescription].
-	(self isTaken: destinationPosition) ifTrue: [self error: self class takenPositionErrorMessageDescription].
-	(self isValidMoveFrom: sourcePosition to: destinationPosition) ifFalse: [self error: self class invalidMovementErrorMessageDescription].
+	self checkValidPosition: destinationPosition.
+	self checkCellEmpty: destinationPosition.
 	
-	board at: sourcePosition put: nil.
 	board at: destinationPosition put: aChip.
+	board at: sourcePosition put: nil.
 	
 	self finishTurn.! !
 
@@ -630,10 +714,10 @@ move: aChip at: sourcePosition to: destinationPosition
 nextPlayer
 	playerIndex := ((playerIndex + 1) \\ 2).! !
 
-!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 18:11:21'!
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:49:23'!
 put: aChip at: aPoint 
-	(self isTaken: aPoint) ifTrue: [self error: self class takenPositionErrorMessageDescription].
-
+	self checkValidPosition: aPoint.
+	self checkCellEmpty: aPoint.
 	playedChips := playedChips+1.
 	board at: aPoint put: aChip.
 	self finishTurn.! !
@@ -642,6 +726,11 @@ put: aChip at: aPoint
 state
 	^TerniLapilliState stateFor: self
 	! !
+
+!TerniLapilli methodsFor: 'private' stamp: 'LR 6/17/2020 19:21:46'!
+validateMoveFrom: sourcePoint to: destinationPoint 
+	((validMoves at: sourcePoint) includes: destinationPoint) 
+	ifFalse: [self error: self class invalidMovementErrorMessageDescription]! !
 
 
 !TerniLapilli methodsFor: 'initialization' stamp: 'LR 6/17/2020 18:10:40'!
@@ -668,24 +757,28 @@ initialize
 	validMoves at: 3@3 put: (Set withAll: {2@3. 2@2. 3@2.}).! !
 
 
-!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:10:20'!
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 20:08:59'!
 moveOAt: sourcePosition to: destinationPosition
-	self player playO.
+	self checkPlayerOTurn.
+	self checkValidPosition: sourcePosition.
+	self checkSourceO: sourcePosition.
 	self state move: #O at: sourcePosition to: destinationPosition.! !
 
-!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:07:24'!
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 20:08:47'!
 moveXAt: sourcePosition to: destinationPosition
-	self player playX.
+	self checkPlayerXTurn.
+	self checkValidPosition: sourcePosition.
+	self checkSourceX: sourcePosition.
 	self state move: #X at: sourcePosition to: destinationPosition.! !
 
-!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:12:13'!
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 19:31:27'!
 putOAt: aPoint 
-	self player playO.
+	self checkPlayerOTurn.
 	self state put: #O at: aPoint.! !
 
-!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 18:12:01'!
+!TerniLapilli methodsFor: 'moving' stamp: 'LR 6/17/2020 19:31:20'!
 putXAt: aPoint 
-	self player playX.
+	self checkPlayerXTurn.
 	self state put: #X at: aPoint.! !
 
 
@@ -727,21 +820,13 @@ winner
 TerniLapilli class
 	instanceVariableNames: ''!
 
-!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:19'!
+!TerniLapilli class methodsFor: 'errors' stamp: 'LR 6/16/2020 21:34:19'!
 invalidMovementErrorMessageDescription
 	^'invalid movement'! !
 
-!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:37:08'!
-moveExistingChipsErrorMessageDescription
-	^'should move existing chips'! !
-
-!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/17/2020 17:51:01'!
-notYourChipPositionErrorMessageDescription
-	^'the chip you are trying to move is not yours'! !
-
-!TerniLapilli class methodsFor: 'as yet unclassified' stamp: 'LR 6/16/2020 21:34:46'!
-takenPositionErrorMessageDescription
-	^'taken position'! !
+!TerniLapilli class methodsFor: 'errors' stamp: 'LR 6/17/2020 19:52:04'!
+pointOutOfBoundErrorMsg
+	^'invalid position - out of bounds'! !
 
 
 !classDefinition: #TerniLapilliState category: #TerniLapilli!
