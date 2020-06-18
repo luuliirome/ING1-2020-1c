@@ -129,23 +129,23 @@ winXByPuttingThreeOnARow: aGameForXToWin
 test01GameIsNotOverIfNeverStarted
 	self deny: (newGame isOver)! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:12:17'!
-test02XStartsTheGame
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:09:34'!
+test02XShouldPlayFirstAtNewGame
 	self assert: (newGame isPlayingX)! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:12:30'!
-test03ODoesNotStartTheGame
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:16:37'!
+test03OShouldNotPlayFirstAtNewGame
 	self deny: (newGame isPlayingO)! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:21:40'!
-test04PutAChipInAnInvalidPositionWillRaiseAnError
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:18:01'!
+test04PutAChipInAnInvalidPositionShouldRaiseAnError
 	
 	self should: [newGame putXAt: 4@1]
 	raise: Error
 	withMessageText: TerniLapilli pointOutOfBoundErrorMsg.! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:35:53'!
-test05MoveAChipFromAnInvalidPositionWillRaiseAnError
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:17:47'!
+test05MoveAChipFromAnInvalidPositionShouldRaiseAnError
 	|aStartedGame|
 
 	aStartedGame := self play: newGame.
@@ -154,8 +154,8 @@ test05MoveAChipFromAnInvalidPositionWillRaiseAnError
 	on: Error
 	do: [:anError | self assert: anError messageText = TerniLapilli pointOutOfBoundErrorMsg ]! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 21:57:36'!
-test06MoveAChipToAnInvalidPositionWillRaiseAnError
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:17:33'!
+test06MoveAChipToAnInvalidPositionShouldRaiseAnError
 	| aStartedGame |
 
 	aStartedGame := self play: newGame.
@@ -164,8 +164,8 @@ test06MoveAChipToAnInvalidPositionWillRaiseAnError
 	on: Error
 	do: [:anError | self assert: anError messageText = TerniLapilli pointOutOfBoundErrorMsg ]! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 21:57:46'!
-test07MoveAChipWithAnInvalidMovementWillRaiseAnError
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:17:14'!
+test07MoveAChipWithAnInvalidMovementShouldRaiseAnError
 	| aStartedGame |
 
 	aStartedGame := self play: newGame.
@@ -174,35 +174,35 @@ test07MoveAChipWithAnInvalidMovementWillRaiseAnError
 	on: Error
 	do: [:anError | self assert: anError messageText = TerniLapilli invalidMovementErrorMessageDescription ].! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:13:46'!
-test08AfterXIsOTurn
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:19:13'!
+test08WhenXFinishHisTurnShouldStartOTurn
 	newGame putXAt: 1@1.
 	self deny: (newGame isPlayingX).
 	self assert: (newGame isPlayingO).! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:13:57'!
-test09AfterOIsXTurn
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:19:41'!
+test09WhenOFinishHisTurnShouldStartXTurn
 	newGame putXAt: 2@1.
 	newGame putOAt: 1@1.
 	self assert: (newGame isPlayingX).
 	self deny: (newGame isPlayingO).! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 20:14:05'!
-test10CantPutAChipInATakenSpace
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:20:28'!
+test10WhenPuttinAChipInATakenSpaceShouldRaiseAnError
 	newGame putXAt: 1@1.
 	[newGame putOAt: 1@1. self fail.]
 	on: Error
 	do: [:anError | self assert: anError messageText = CellState cellNotEmptyErrorMsg ]! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 21:58:11'!
-test11OCantPlayIfIsXTurn
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:21:13'!
+test11WhenOPlayInXTurnShouldRaiseAnError
 	[newGame putOAt: 1@1. self fail.]
 	on: Error 
 	do: [ :anError | self assert: anError messageText = PlayerX notYourTurnErrorMessageDescription]
 	! !
 
-!TerniLapilliTests methodsFor: 'testing' stamp: 'LR 6/17/2020 21:58:24'!
-test12XCantPlayIfIsOTurn
+!TerniLapilliTests methodsFor: 'testing' stamp: 'SA 6/18/2020 15:21:37'!
+test12WhenXPlayInOTurnShouldRaiseAnError
 	newGame putXAt: 1@1.
 	[newGame putXAt: 2@1. self fail.]
 	on: Error 
