@@ -908,9 +908,9 @@ put: aChip at: aPosition
 TerniLapilliStateAllChipsSet class
 	instanceVariableNames: ''!
 
-!TerniLapilliStateAllChipsSet class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:56:08'!
+!TerniLapilliStateAllChipsSet class methodsFor: 'state selection' stamp: 'LR 6/18/2020 13:18:23'!
 canHandle: aTerniLapilli
-	^aTerniLapilli playedChips = 6.! !
+	^aTerniLapilli winner = nil and: aTerniLapilli playedChips = 6.! !
 
 
 !classDefinition: #TerniLapilliStateNotAllChipsSet category: #TerniLapilli!
@@ -938,9 +938,9 @@ put: aChip at: aPosition
 TerniLapilliStateNotAllChipsSet class
 	instanceVariableNames: ''!
 
-!TerniLapilliStateNotAllChipsSet class methodsFor: 'state selection' stamp: 'LR 6/17/2020 17:56:20'!
+!TerniLapilliStateNotAllChipsSet class methodsFor: 'state selection' stamp: 'LR 6/18/2020 13:18:41'!
 canHandle: aTerniLapilli
-	^aTerniLapilli playedChips < 6.! !
+	^aTerniLapilli winner = nil and: aTerniLapilli playedChips < 6.! !
 
 
 !classDefinition: #TerniLapilliStateOver category: #TerniLapilli!
