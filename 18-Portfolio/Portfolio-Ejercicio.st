@@ -14,13 +14,13 @@ test01PortfolioHasZeroAsBalanceWhenCreated
 	self assert: 0 equals: portfolio balance .
 ! !
 
-!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/18/2020 20:18:37'!
+!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/20/2020 17:00:04'!
 test02PortfolioHasNoneTransactionsWhenCreated
 	| portfolio |
 	
 	portfolio := Portfolio new.
 
-	self assert: portfolio transactions size equals: 0.
+	self assert: 0 equals: portfolio transactions size.
 ! !
 
 !PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/18/2020 20:23:20'!
@@ -47,7 +47,7 @@ test04PorfolioHasZeroAsBalanceWhenAddingAnAccountWithoutTransactions
 	self assert: 0 equals: account balance .
 ! !
 
-!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/20/2020 13:07:33'!
+!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/20/2020 17:00:20'!
 test05PorfolioHasNoneTransactionsWhenAddingAnAccountWithoutTransactions
 	| portfolio account |
 	
@@ -55,7 +55,7 @@ test05PorfolioHasNoneTransactionsWhenAddingAnAccountWithoutTransactions
 	account := ReceptiveAccount new.
 	
 	portfolio add: account.
-	self assert: portfolio transactions size equals: 0.
+	self assert: 0 equals: portfolio transactions size.
 ! !
 
 !PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/20/2020 13:07:32'!
@@ -75,7 +75,7 @@ test06PortfolioHasNotRegisterAnyTransactionWhenAddingAnAccountWithoutTransaction
 ! !
 
 
-!PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/20/2020 13:07:33'!
+!PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/20/2020 16:59:49'!
 test10PorfolioHasBalanceWhenAddingMultipleAccountsWithTransactions
 	| portfolio account1 account2 |
 	
@@ -86,10 +86,11 @@ test10PorfolioHasBalanceWhenAddingMultipleAccountsWithTransactions
 	portfolio add: account1.
 	
 	account2 := ReceptiveAccount new.
-	Withdraw register: 10 on: account2.
+	Deposit register: 100 on: account2.
+	Withdraw register: 50 on: account2.
 	portfolio add: account2.
 	
-	self assert: portfolio balance equals: 40.! !
+	self assert: 100 equals: portfolio balance.! !
 
 !PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/20/2020 13:07:33'!
 test11PorfolioHasTransactionsWhenAddingMultipleAccountsWithTransactions
@@ -128,7 +129,7 @@ test12PorfolioHasRegisteredTransactionsWhenAddingMultipleAccountsWithTransaction
 	self assert: (portfolio hasRegistered: withdraw).! !
 
 
-!PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/20/2020 13:07:33'!
+!PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/20/2020 17:00:42'!
 test07PorfolioHasBalanceWhenAddingAnAccountWithTransactions
 	| portfolio account |
 	
@@ -138,7 +139,7 @@ test07PorfolioHasBalanceWhenAddingAnAccountWithTransactions
 	Withdraw register: 50 on: account.
 	portfolio add: account.
 	
-	self assert: portfolio balance equals: 50.! !
+	self assert: 50 equals: portfolio balance.! !
 
 !PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/20/2020 13:07:32'!
 test08PorfolioHasTransactionsWhenAddingAnAccountWithTransactions
@@ -178,7 +179,7 @@ test13PorfolioHasZeroAsBalanceWhenAddingAPortfolioWithoutAccounts
 	self assert: 0 equals: portfolio1 balance .
 ! !
 
-!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/20/2020 13:07:33'!
+!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/20/2020 17:00:59'!
 test14PorfolioHasNoneTransactionsWhenAddingAPortfolioWithoutTransactions
 	| portfolio1 portfolio2 |
 	
@@ -186,7 +187,7 @@ test14PorfolioHasNoneTransactionsWhenAddingAPortfolioWithoutTransactions
 	portfolio2 := ReceptiveAccount new.
 	
 	portfolio1 add: portfolio2 .
-	self assert: portfolio1 transactions size equals: 0.
+	self assert: 0 equals: portfolio1 transactions size.
 ! !
 
 !PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/20/2020 13:07:33'!
@@ -206,7 +207,7 @@ test15PortfolioHasNotRegisterAnyTransactionWhenAddingAPortfolioWithoutTransactio
 ! !
 
 
-!PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/20/2020 13:07:32'!
+!PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/20/2020 17:01:10'!
 test16PorfolioHasBalanceWhenAddingAPortfolioWithAnAccountWithTransactions
 	| portfolio1 portfolio2 account |
 	
@@ -218,7 +219,7 @@ test16PorfolioHasBalanceWhenAddingAPortfolioWithAnAccountWithTransactions
 	portfolio2 add: account.
 	portfolio1 add: portfolio2.
 	
-	self assert: portfolio1 balance equals: 50.! !
+	self assert: 50 equals: portfolio1 balance.! !
 
 !PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/20/2020 13:07:33'!
 test17PorfolioHasTransactionsWhenAddingAPortfolioWithAnAccountWithTransactions
@@ -348,7 +349,7 @@ test26ShouldRaiseAnErrorWhenAddingAnAccountThatItsOnAGrandparentPortfolio
 	withMessageText: Portfolio duplicateBankThingErrorMsg.! !
 
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios whit multiple accounts' stamp: 'LR 6/20/2020 13:53:13'!
+!PortfolioTest methodsFor: 'testing - adding multiple portfolios whit multiple accounts' stamp: 'LR 6/20/2020 17:01:36'!
 test20PorfolioHasBalanceWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	| portfolio1 portfolio2 portfolio3 account1 account2 account3 |
 	
@@ -370,7 +371,7 @@ test20PorfolioHasBalanceWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	portfolio3 add: account3.
 	portfolio1 add: portfolio3.
 	
-	self assert: portfolio1 balance equals: 140.! !
+	self assert: 140 equals: portfolio1 balance.! !
 
 !PortfolioTest methodsFor: 'testing - adding multiple portfolios whit multiple accounts' stamp: 'LR 6/20/2020 13:57:43'!
 test21PorfolioHasTransactionsWhenAddingMultiplePortfoliosWithAccountsWithTransactions
@@ -788,9 +789,9 @@ hasRegistered: aTransaction
 ! !
 
 
-!ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/20/2020 13:29:22'!
+!ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/20/2020 16:58:12'!
 has: anAccount
-	^self transactions = anAccount transactions.! !
+	^self = anAccount.! !
 
 !ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/20/2020 13:28:27'!
 includes: aBankThing
