@@ -349,7 +349,7 @@ test26ShouldRaiseAnErrorWhenAddingAnAccountThatItsOnAGrandparentPortfolio
 	withMessageText: Portfolio duplicateBankThingErrorMsg.! !
 
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios whit multiple accounts' stamp: 'LR 6/20/2020 17:01:36'!
+!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/20/2020 17:01:36'!
 test20PorfolioHasBalanceWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	| portfolio1 portfolio2 portfolio3 account1 account2 account3 |
 	
@@ -373,7 +373,7 @@ test20PorfolioHasBalanceWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	
 	self assert: 140 equals: portfolio1 balance.! !
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios whit multiple accounts' stamp: 'LR 6/20/2020 13:57:43'!
+!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/20/2020 13:57:43'!
 test21PorfolioHasTransactionsWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	| portfolio1 portfolio2 portfolio3 account1 account2 account3 deposit1 deposit2 withdraw1 withdraw2 |
 	
@@ -400,7 +400,7 @@ test21PorfolioHasTransactionsWhenAddingMultiplePortfoliosWithAccountsWithTransac
 	self assert: (portfolio1 transactions includes:  withdraw1).
 	self assert: (portfolio1 transactions includes:  withdraw2).! !
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios whit multiple accounts' stamp: 'LR 6/20/2020 13:57:24'!
+!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/20/2020 13:57:24'!
 test22PorfolioHasRegisteredWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	| portfolio1 portfolio2 portfolio3 account1 account2 account3 deposit1 deposit2 withdraw1 withdraw2 |
 	
@@ -623,40 +623,40 @@ for: aValue
 	^ self new initializeFor: aValue ! !
 
 
-!classDefinition: #BankThing category: #'Portfolio-Ejercicio'!
-Object subclass: #BankThing
+!classDefinition: #FinancialAsset category: #'Portfolio-Ejercicio'!
+Object subclass: #FinancialAsset
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!BankThing methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:16'!
+!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:16'!
 addTo: aBankThing
 	self subclassResponsibility ! !
 
-!BankThing methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:31'!
+!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:31'!
 balance
 	self subclassResponsibility ! !
 
-!BankThing methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:12'!
+!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:12'!
 has: aBankThing
 	self subclassResponsibility ! !
 
-!BankThing methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:52'!
+!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:52'!
 hasRegistered: aBankThing
 	self subclassResponsibility ! !
 
-!BankThing methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:05'!
+!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:05'!
 includes: aBankThing
 	self subclassResponsibility ! !
 
-!BankThing methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:28'!
+!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:28'!
 transactions
 	self subclassResponsibility ! !
 
 
 !classDefinition: #Portfolio category: #'Portfolio-Ejercicio'!
-BankThing subclass: #Portfolio
+FinancialAsset subclass: #Portfolio
 	instanceVariableNames: 'content parentPortfolios'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -666,40 +666,40 @@ BankThing subclass: #Portfolio
 addTo: aPortfolio 
 	parentPortfolios add: aPortfolio! !
 
-!Portfolio methodsFor: 'private' stamp: 'LR 6/20/2020 15:59:20'!
+!Portfolio methodsFor: 'private' stamp: 'LR 6/21/2020 19:49:31'!
 rootPortfolios
 	| rootPortfolios |
 	rootPortfolios := OrderedCollection new.
 	
 	parentPortfolios size = 0 ifTrue: [rootPortfolios add: self].
 	parentPortfolios do: [
-		:aParent |
-		rootPortfolios addAll: aParent rootPortfolios
+		:aParentPortfolio |
+		rootPortfolios addAll: aParentPortfolio rootPortfolios
 		].
 	
 	^rootPortfolios! !
 
 
-!Portfolio methodsFor: 'transactions' stamp: 'LR 6/20/2020 15:59:29'!
+!Portfolio methodsFor: 'transactions' stamp: 'LR 6/21/2020 19:56:04'!
 transactions
 	| transactions | 
 	
 	transactions := OrderedCollection new.
 	
 	content do: [
-			:bankThing |
-			transactions addAll: bankThing transactions
+			:aFinancialAsset |
+			transactions addAll: aFinancialAsset transactions
 		].
 	
 	^transactions ! !
 
 
-!Portfolio methodsFor: 'adding' stamp: 'LR 6/20/2020 15:59:03'!
-add: aBankThing
-	self checkDuplicates: aBankThing. 
+!Portfolio methodsFor: 'adding' stamp: 'LR 6/21/2020 19:55:51'!
+add: aFinancialAsset
+	self checkDuplicates: aFinancialAsset. 
 	
-	content add: aBankThing.
-	aBankThing addTo: self.! !
+	content add: aFinancialAsset.
+	aFinancialAsset addTo: self.! !
 
 
 !Portfolio methodsFor: 'initialization' stamp: 'LR 6/20/2020 15:59:39'!
@@ -708,39 +708,39 @@ initialize
 	parentPortfolios := OrderedCollection new.! !
 
 
-!Portfolio methodsFor: 'balance' stamp: 'LR 6/20/2020 15:59:46'!
+!Portfolio methodsFor: 'balance' stamp: 'LR 6/21/2020 19:56:17'!
 balance
-	^content sum: [:bankThing | bankThing balance] ifEmpty: [0].! !
+	^content sum: [:aFinancialAsset | aFinancialAsset balance] ifEmpty: [0].! !
 
 
-!Portfolio methodsFor: 'testing' stamp: 'LR 6/20/2020 15:59:58'!
+!Portfolio methodsFor: 'testing' stamp: 'LR 6/21/2020 19:56:24'!
 hasRegistered: aTransaction 
 	| accountsWithATransaction |
 	
 	accountsWithATransaction := content select: [
-			:bankThing |
-			bankThing hasRegistered: aTransaction
+			:aFinancialAsset |
+			aFinancialAsset hasRegistered: aTransaction
 		].
 	
 	^accountsWithATransaction size > 0.! !
 
 
-!Portfolio methodsFor: 'comparing' stamp: 'LR 6/20/2020 15:37:02'!
-has: anAccount
-	^self processAllContent: [:aBankThing | aBankThing has: anAccount].! !
+!Portfolio methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:56:49'!
+has: aReceptiveAccount
+	^self processAllContent: [:aFinancialAsset | aFinancialAsset has: aReceptiveAccount].! !
 
-!Portfolio methodsFor: 'comparing' stamp: 'LR 6/20/2020 15:37:28'!
-includes: aBankThing
-	^self processAllContent: [:bankThing | bankThing includes: aBankThing].! !
+!Portfolio methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:57:05'!
+includes: aFinancialAsset
+	^self processAllContent: [:financialAsset | financialAsset includes: aFinancialAsset].! !
 
-!Portfolio methodsFor: 'comparing' stamp: 'LR 6/20/2020 16:00:05'!
+!Portfolio methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:57:14'!
 processAllContent: aProcedure
-	^(content select: [:bankThing | aProcedure value: bankThing]) size > 0.! !
+	^(content select: [:aFinancialAsset | aProcedure value: aFinancialAsset]) size > 0.! !
 
 
-!Portfolio methodsFor: 'validations' stamp: 'LR 6/20/2020 15:56:49'!
-checkDuplicates: aBankThing 
-	self rootPortfolios detect: [:bankThing | bankThing includes: aBankThing ] ifNone: [^self].
+!Portfolio methodsFor: 'validations' stamp: 'LR 6/21/2020 19:57:22'!
+checkDuplicates: aFinancialAsset 
+	self rootPortfolios detect: [:portfolio | portfolio includes: aFinancialAsset ] ifNone: [^self].
 	self error: self class duplicateBankThingErrorMsg.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -755,7 +755,7 @@ duplicateBankThingErrorMsg
 
 
 !classDefinition: #ReceptiveAccount category: #'Portfolio-Ejercicio'!
-BankThing subclass: #ReceptiveAccount
+FinancialAsset subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -789,13 +789,13 @@ hasRegistered: aTransaction
 ! !
 
 
-!ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/20/2020 16:58:12'!
-has: anAccount
-	^self = anAccount.! !
+!ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:58:49'!
+has: aReceptiveAccount
+	^self = aReceptiveAccount.! !
 
-!ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/20/2020 13:28:27'!
-includes: aBankThing
-	^aBankThing has: self.! !
+!ReceptiveAccount methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:57:39'!
+includes: aFinancialAsset
+	^aFinancialAsset has: self.! !
 
 
 !ReceptiveAccount methodsFor: 'private' stamp: 'LR 6/20/2020 15:00:02'!
