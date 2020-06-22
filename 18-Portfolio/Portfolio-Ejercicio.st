@@ -1,431 +1,243 @@
 !classDefinition: #PortfolioTest category: #'Portfolio-Ejercicio'!
 TestCase subclass: #PortfolioTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'depositFor50 depositFor100 withdrawFor50 portfolio emptyPortfolio anotherEmptyPortfolio emptyAccount withdrawFor10'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/18/2020 20:20:18'!
+!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/21/2020 21:05:12'!
 test01PortfolioHasZeroAsBalanceWhenCreated
-	| portfolio |
-	
-	portfolio := Portfolio new.
-
-	self assert: 0 equals: portfolio balance .
+	self shouldHasZeroBalance: emptyPortfolio.
 ! !
 
-!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/20/2020 17:00:04'!
+!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/21/2020 21:05:20'!
 test02PortfolioHasNoneTransactionsWhenCreated
-	| portfolio |
-	
-	portfolio := Portfolio new.
-
-	self assert: 0 equals: portfolio transactions size.
+	self shouldHasNotTransactions: emptyPortfolio.
 ! !
 
-!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/18/2020 20:23:20'!
-test03PortfolioHasNotRegisterAnyTransactionWhenCreated
-	| portfolio deposit withdraw |
-	
-	portfolio := Portfolio new.
-	deposit :=  Deposit for: 100.
-	withdraw := Withdraw for: 50.
-		
-	self deny: (portfolio hasRegistered: deposit).
-	self deny: (portfolio hasRegistered:withdraw).
+!PortfolioTest methodsFor: 'testing - empty portfolio' stamp: 'LR 6/21/2020 21:05:26'!
+test03PortfolioHasNotRegisterATransactionWhenCreated	
+	self shouldHasNotRegisteredAnyTransaction: emptyPortfolio.
 ! !
 
 
-!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/20/2020 13:07:32'!
+!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/21/2020 21:07:00'!
 test04PorfolioHasZeroAsBalanceWhenAddingAnAccountWithoutTransactions
-	| portfolio account |
-	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	
-	portfolio add: account.
-	self assert: 0 equals: account balance .
-! !
+	self shouldHasZeroBalance: (emptyPortfolio add: emptyAccount).! !
 
-!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/20/2020 17:00:20'!
+!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/21/2020 21:07:05'!
 test05PorfolioHasNoneTransactionsWhenAddingAnAccountWithoutTransactions
-	| portfolio account |
-	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	
-	portfolio add: account.
-	self assert: 0 equals: portfolio transactions size.
+	self shouldHasNotTransactions: (emptyPortfolio add: emptyAccount).
 ! !
 
-!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/20/2020 13:07:32'!
+!PortfolioTest methodsFor: 'testing - adding empty account' stamp: 'LR 6/21/2020 21:07:12'!
 test06PortfolioHasNotRegisterAnyTransactionWhenAddingAnAccountWithoutTransactions
-	| portfolio account deposit withdraw |
-	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	
-	portfolio add: account.
-	
-	deposit :=  Deposit for: 100.
-	withdraw := Withdraw for: 50.
-		
-	self deny: (portfolio hasRegistered: deposit).
-	self deny: (portfolio hasRegistered:withdraw).
+	self shouldHasNotRegisteredAnyTransaction: (emptyPortfolio add: emptyAccount).
 ! !
 
 
-!PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/20/2020 16:59:49'!
-test10PorfolioHasBalanceWhenAddingMultipleAccountsWithTransactions
-	| portfolio account1 account2 |
+!PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/21/2020 21:30:04'!
+test12PorfolioHasRegisteredHasBalanceAndHasTransactionsWhenAddingMultipleAccountsWithTransactions
+	| account1 account2 |
 	
-	portfolio := Portfolio new.
-	account1 := ReceptiveAccount new.
-	Deposit register: 100 on: account1.
-	Withdraw register: 50 on: account1.
-	portfolio add: account1.
+	account1 := self accountWith: {depositFor100 . withdrawFor50 }.
+	account2 := self accountWith: {depositFor50 }.
+	portfolio := self portfolioWith: {account1. account2.}.
 	
-	account2 := ReceptiveAccount new.
-	Deposit register: 100 on: account2.
-	Withdraw register: 50 on: account2.
-	portfolio add: account2.
-	
-	self assert: 100 equals: portfolio balance.! !
-
-!PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/20/2020 13:07:33'!
-test11PorfolioHasTransactionsWhenAddingMultipleAccountsWithTransactions
-	| portfolio account1 account2 deposit1 deposit2 withdraw |
-	
-	portfolio := Portfolio new.
-	account1 := ReceptiveAccount new.
-	deposit1 := Deposit register: 100 on: account1.
-	withdraw := Withdraw register: 50 on: account1.
-	portfolio add: account1.
-	
-	account2 := ReceptiveAccount new.
-	deposit2 := Deposit register: 300 on: account2.
-	portfolio add: account2.
-	
-	self assert: (portfolio transactions includes: deposit1).
-	self assert: (portfolio transactions includes: deposit2).
-	self assert: (portfolio transactions includes: withdraw).! !
-
-!PortfolioTest methodsFor: 'testing - adding multiple accounts with transactions' stamp: 'LR 6/20/2020 13:07:33'!
-test12PorfolioHasRegisteredTransactionsWhenAddingMultipleAccountsWithTransactions
-	| portfolio account1 account2 deposit1 deposit2 withdraw |
-	
-	portfolio := Portfolio new.
-	account1 := ReceptiveAccount new.
-	deposit1 := Deposit register: 100 on: account1.
-	withdraw := Withdraw register: 50 on: account1.
-	portfolio add: account1.
-	
-	account2 := ReceptiveAccount new.
-	deposit2 := Deposit register: 300 on: account2.
-	portfolio add: account2.
-	
-	self assert: (portfolio hasRegistered: deposit1).
-	self assert: (portfolio hasRegistered: deposit2).
-	self assert: (portfolio hasRegistered: withdraw).! !
+	self should: portfolio hasRegistered: {depositFor50 . depositFor100 . withdrawFor50 .}.
+	self should: portfolio hasTransactions: {depositFor100 . depositFor50 . withdrawFor50 }.
+	self should: portfolio hasBalance: 100.! !
 
 
-!PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/20/2020 17:00:42'!
-test07PorfolioHasBalanceWhenAddingAnAccountWithTransactions
-	| portfolio account |
+!PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/21/2020 21:30:16'!
+test09PorfolioHasRegisteredHasBalanceAndHasTransactionsWhenAddingAnAccountWithTransactions
+	| account |
 	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
-	portfolio add: account.
+	account := self accountWith: {depositFor100. withdrawFor50 }.
+	portfolio := self portfolioWith: {account}.
 	
-	self assert: 50 equals: portfolio balance.! !
-
-!PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/20/2020 13:07:32'!
-test08PorfolioHasTransactionsWhenAddingAnAccountWithTransactions
-	| portfolio account deposit withdraw |
-	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	deposit := Deposit register: 100 on: account.
-	withdraw := Withdraw register: 50 on: account.
-	portfolio add: account.
-	
-	self assert: (portfolio transactions includes: deposit).
-	self assert: (portfolio transactions includes: withdraw).! !
-
-!PortfolioTest methodsFor: 'testing - adding account with transactions' stamp: 'LR 6/20/2020 13:07:33'!
-test09PorfolioHasRegisteredATransactionWhenAddingAnAccountWithTransactions
-	| portfolio account deposit withdraw |
-	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	deposit := Deposit register: 100 on: account.
-	withdraw := Withdraw register: 50 on: account.
-	portfolio add: account.
-	
-	self assert: (portfolio hasRegistered: deposit).
-	self assert: (portfolio hasRegistered: withdraw).! !
+	self should: (portfolio ) hasRegistered: {depositFor100 . withdrawFor50 }.
+	self should: (portfolio ) hasTransactions: {depositFor100 . withdrawFor50 }.
+	self should: (portfolio ) hasBalance: 50.! !
 
 
-!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/20/2020 13:07:33'!
+!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/21/2020 21:07:50'!
 test13PorfolioHasZeroAsBalanceWhenAddingAPortfolioWithoutAccounts
-	| portfolio1 portfolio2 |
-	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	
-	portfolio1 add: portfolio2.
-	self assert: 0 equals: portfolio1 balance .
+	self shouldHasZeroBalance: (emptyPortfolio add: anotherEmptyPortfolio).
 ! !
 
-!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/20/2020 17:00:59'!
+!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/21/2020 21:08:01'!
 test14PorfolioHasNoneTransactionsWhenAddingAPortfolioWithoutTransactions
-	| portfolio1 portfolio2 |
-	
-	portfolio1 := Portfolio new.
-	portfolio2 := ReceptiveAccount new.
-	
-	portfolio1 add: portfolio2 .
-	self assert: 0 equals: portfolio1 transactions size.
-! !
+	self shouldHasNotTransactions: (emptyPortfolio add: anotherEmptyPortfolio).! !
 
-!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/20/2020 13:07:33'!
+!PortfolioTest methodsFor: 'testing - adding empty portfolio' stamp: 'LR 6/21/2020 21:08:15'!
 test15PortfolioHasNotRegisterAnyTransactionWhenAddingAPortfolioWithoutTransactions
-	| portfolio1 portfolio2 deposit withdraw |
-	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	
-	portfolio1 add: portfolio2.
-	
-	deposit :=  Deposit for: 100.
-	withdraw := Withdraw for: 50.
-		
-	self deny: (portfolio1 hasRegistered: deposit).
-	self deny: (portfolio1 hasRegistered:withdraw).
-! !
+	self shouldHasNotRegisteredAnyTransaction: (emptyPortfolio add: anotherEmptyPortfolio).! !
 
 
-!PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/20/2020 17:01:10'!
-test16PorfolioHasBalanceWhenAddingAPortfolioWithAnAccountWithTransactions
-	| portfolio1 portfolio2 account |
+!PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/21/2020 21:30:41'!
+test18PorfolioHasRegisteredHasBalanceAndHasTransactionsWhenAddingAPortfolioWithAnAccountWithTransactions
+	| account |
 	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
-	portfolio2 add: account.
-	portfolio1 add: portfolio2.
+	account := self accountWith: {depositFor100 . withdrawFor50 }.
+	portfolio := self portfolioWith: {emptyPortfolio add: account.}.
 	
-	self assert: 50 equals: portfolio1 balance.! !
-
-!PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/20/2020 13:07:33'!
-test17PorfolioHasTransactionsWhenAddingAPortfolioWithAnAccountWithTransactions
-	| portfolio1 portfolio2 account deposit withdraw |
-	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	account := ReceptiveAccount new.
-	deposit := Deposit register: 100 on: account.
-	withdraw := Withdraw register: 50 on: account.
-	portfolio2 add: account.
-	
-	portfolio1 add: portfolio2.
-	
-	self assert: (portfolio1 transactions includes: deposit).
-	self assert: (portfolio1 transactions includes: withdraw).! !
-
-!PortfolioTest methodsFor: 'testing - adding portfolio with an account' stamp: 'LR 6/20/2020 13:07:32'!
-test18PorfolioHasRegisteredATransactionWhenAddingAPortfolioWithAnAccountWithTransactions
-	| portfolio1 portfolio2 account deposit withdraw |
-	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	account := ReceptiveAccount new.
-	deposit := Deposit register: 100 on: account.
-	withdraw := Withdraw register: 50 on: account.
-	portfolio2 add: account.
-	portfolio1 add: portfolio2.
-	
-	self assert: (portfolio1 hasRegistered: deposit).
-	self assert: (portfolio1 hasRegistered: withdraw).! !
+	self should: portfolio hasRegistered: {depositFor100 . withdrawFor50 }.
+	self should: portfolio hasBalance: 50.
+	self should: portfolio hasTransactions: {depositFor100 . withdrawFor50 }.! !
 
 
-!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/20/2020 13:34:08'!
+!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/21/2020 21:13:20'!
 test19ShouldRaiseAnErrorWhenAddingADuplicateAccount
-	| portfolio account |
+	portfolio add: emptyAccount.
 	
-	portfolio := Portfolio new.
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
-	portfolio add: account.
-	
-	self should: [portfolio add: account] 
+	self should: [portfolio add: emptyAccount ] 
 	raise: Error
 	withMessageText: Portfolio duplicateBankThingErrorMsg .! !
 
-!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/20/2020 14:51:00'!
+!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/21/2020 21:13:39'!
 test23ShouldRaiseAnErrorWhenAddingAPorfolioWithAnAccountThatItsAlreadyInTheMainPortfolio
-	| mainPortfolio portfolio account |
+	| mainPortfolio |
 	
 	mainPortfolio := Portfolio new.
-	portfolio := Portfolio new.
+	mainPortfolio add: emptyAccount .
+	portfolio add: emptyAccount.
 	
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
-	
-	mainPortfolio add: account.
-	portfolio add: account.
-	
-	self should: [mainPortfolio add: portfolio.]
+	self should: [mainPortfolio add: portfolio .]
 	raise: Error
 	withMessageText: Portfolio duplicateBankThingErrorMsg.! !
 
-!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/20/2020 14:49:29'!
+!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/21/2020 21:13:53'!
 test24ShouldRaiseAnErrorWhenAddingAnAccountToAPortfolioThatItsAlreadyInTheMainPortfolio
-	| mainPortfolio portfolio  account |
 	
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
+	portfolio add: emptyPortfolio .
+	portfolio add: emptyAccount .
 	
-	mainPortfolio := Portfolio new.
-	portfolio := Portfolio new.
-	
-	mainPortfolio add: portfolio.
-	mainPortfolio add: account.
-	
-	self should: [portfolio add: account.]
+	self should: [emptyPortfolio add: emptyAccount .]
 	raise: Error
 	withMessageText: Portfolio duplicateBankThingErrorMsg.! !
 
-!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/20/2020 14:52:20'!
+!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/21/2020 21:14:05'!
 test25ShouldRaiseAnErrorWhenAddingAnAccountThatItsAlreadyInAChildPortfolioOfTheMainPortfolio
-	| mainPortfolio portfolio  account |
+	portfolio add: emptyPortfolio .
+	emptyPortfolio add: emptyAccount .
 	
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
-	
-	mainPortfolio := Portfolio new.
-	portfolio := Portfolio new.
-	
-	mainPortfolio add: portfolio.
-	portfolio add: account.
-	
-	self should: [mainPortfolio add: account]
+	self should: [portfolio add: emptyAccount ]
 	raise: Error
 	withMessageText: Portfolio duplicateBankThingErrorMsg.! !
 
-!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/20/2020 15:30:34'!
+!PortfolioTest methodsFor: 'testing - invalid actions' stamp: 'LR 6/21/2020 21:16:08'!
 test26ShouldRaiseAnErrorWhenAddingAnAccountThatItsOnAGrandparentPortfolio
-	| portfolio1 portfolio2 portfolio3 portfolio4 portfolio5 account |
+	| portfolio1 portfolio2 portfolio3 portfolio4 |
 	
-	account := ReceptiveAccount new.
-	Deposit register: 100 on: account.
-	Withdraw register: 50 on: account.
+	portfolio3 := self portfolioWith: {emptyPortfolio}.
+	portfolio4 := self portfolioWith: {emptyPortfolio}.
 	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	portfolio1 add: account.
-	portfolio2 add: account.
-	
-	portfolio3 := Portfolio new.	
-	portfolio4 := Portfolio new.
-	portfolio5 := Portfolio new.
-
-	portfolio3 add: portfolio5.
-	portfolio4 add: portfolio5.
-	
-	portfolio1 add: portfolio3.
-	portfolio2 add: portfolio4.
-	
-	self should: [portfolio5 add: account]
+	portfolio1 := self portfolioWith: {emptyAccount. portfolio3}.
+	portfolio2 := self portfolioWith: {emptyAccount. portfolio4}.
+		
+	self should: [emptyPortfolio add: emptyAccount ]
 	raise: Error
 	withMessageText: Portfolio duplicateBankThingErrorMsg.! !
 
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/20/2020 17:01:36'!
-test20PorfolioHasBalanceWhenAddingMultiplePortfoliosWithAccountsWithTransactions
+!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/21/2020 21:30:59'!
+test22PorfolioHasRegisteredHasBalanceAndHasTransactionsWhenAddingMultiplePortfoliosWithAccountsWithTransactions
 	| portfolio1 portfolio2 portfolio3 account1 account2 account3 |
 	
 	portfolio1 := Portfolio new.
 	portfolio2 := Portfolio new.
 	portfolio3 := Portfolio new.
-	account1 := ReceptiveAccount new.
-	Deposit register: 100 on: account1.
-	Withdraw register: 50 on: account1.
-	account2 := ReceptiveAccount new.
-	Deposit register: 100 on: account2.
-	account3 := ReceptiveAccount new.
-	Withdraw register: 10 on: account3.
 	
-	portfolio2 add: account1.
-	portfolio2 add: account2.
-	portfolio1 add: portfolio2.
+	account1 := self accountWith: {depositFor100 . withdrawFor50 }.
 	
-	portfolio3 add: account3.
-	portfolio1 add: portfolio3.
+	account2 := self accountWith: {depositFor50.}.
 	
-	self assert: 140 equals: portfolio1 balance.! !
+	account3 := self accountWith: {withdrawFor10}.
+	
+	portfolio2 := self portfolioWith: {account1. account2}.
+	portfolio3 := self portfolioWith: {account3}.
+	portfolio1 := self portfolioWith: {portfolio2. portfolio3}.
+	
+	self should: portfolio1 hasRegistered: {depositFor50 . depositFor100 . withdrawFor50 . withdrawFor10 }.
+	self should: portfolio1 hasTransactions: {depositFor100 . depositFor50 . withdrawFor50 . withdrawFor10 }.
+	self should: portfolio1 hasBalance: 90.! !
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/20/2020 13:57:43'!
-test21PorfolioHasTransactionsWhenAddingMultiplePortfoliosWithAccountsWithTransactions
-	| portfolio1 portfolio2 portfolio3 account1 account2 account3 deposit1 deposit2 withdraw1 withdraw2 |
-	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	portfolio3 := Portfolio new.
-	account1 := ReceptiveAccount new.
-	deposit1 := Deposit register: 100 on: account1.
-	withdraw1 := Withdraw register: 50 on: account1.
-	account2 := ReceptiveAccount new.
-	deposit2 := Deposit register: 100 on: account2.
-	account3 := ReceptiveAccount new.
-	withdraw2 := Withdraw register: 10 on: account3.
-	
-	portfolio2 add: account1.
-	portfolio2 add: account2.
-	portfolio1 add: portfolio2.
-	
-	portfolio3 add: account3.
-	portfolio1 add: portfolio3.
-	
-	self assert: (portfolio1 transactions includes: deposit1).
-	self assert: (portfolio1 transactions includes:  deposit2).
-	self assert: (portfolio1 transactions includes:  withdraw1).
-	self assert: (portfolio1 transactions includes:  withdraw2).! !
 
-!PortfolioTest methodsFor: 'testing - adding multiple portfolios with multiple accounts' stamp: 'LR 6/20/2020 13:57:24'!
-test22PorfolioHasRegisteredWhenAddingMultiplePortfoliosWithAccountsWithTransactions
-	| portfolio1 portfolio2 portfolio3 account1 account2 account3 deposit1 deposit2 withdraw1 withdraw2 |
+!PortfolioTest methodsFor: 'setUp/tearDown' stamp: 'LR 6/21/2020 21:20:37'!
+setUp
+	depositFor50 := Deposit for: 50.
+	depositFor100 := Deposit for: 100.
+	withdrawFor50 := Withdraw for: 50.
+	withdrawFor10 := Withdraw for: 10.
 	
-	portfolio1 := Portfolio new.
-	portfolio2 := Portfolio new.
-	portfolio3 := Portfolio new.
-	account1 := ReceptiveAccount new.
-	deposit1 := Deposit register: 100 on: account1.
-	withdraw1 := Withdraw register: 50 on: account1.
-	account2 := ReceptiveAccount new.
-	deposit2 := Deposit register: 100 on: account2.
-	account3 := ReceptiveAccount new.
-	withdraw2 := Withdraw register: 10 on: account3.
+	emptyPortfolio := Portfolio new.
+	anotherEmptyPortfolio := Portfolio new.
+	portfolio := Portfolio new.
+	emptyAccount := ReceptiveAccount new.! !
+
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:51:02'!
+accountWith: transactions
+	| account |
 	
-	portfolio2 add: account1.
-	portfolio2 add: account2.
-	portfolio1 add: portfolio2.
+	account := ReceptiveAccount new.
 	
-	portfolio3 add: account3.
-	portfolio1 add: portfolio3.
+	transactions do: [
+			:transaction |
+			account register: transaction.
+		].
 	
-	self assert: (portfolio1 hasRegistered: deposit1).
-	self assert: (portfolio1 hasRegistered: deposit2).
-	self assert: (portfolio1 hasRegistered: withdraw1).
-	self assert: (portfolio1 hasRegistered: withdraw2).! !
+	^account! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 21:17:15'!
+portfolioWith: contents
+	| newPortfolio |
+	newPortfolio := Portfolio new.
+	
+	contents do: [
+			:content |
+			newPortfolio add: content
+		].
+	
+	^newPortfolio 
+	! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:30:44'!
+should: aPortfolio hasBalance: balanceAmount 
+	self assert: balanceAmount equals: aPortfolio balance.! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:13:38'!
+should: aPortfolio hasRegistered: transactions
+
+	transactions do:[
+			:transaction |
+			self assert: (aPortfolio hasRegistered: transaction).
+		] 
+	! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:31:05'!
+should: aPortfolio hasTransactions: transactions
+	| aPortfolioTransactions |
+	aPortfolioTransactions := aPortfolio transactions.
+	
+	transactions do: [
+			:transaction |
+			self assert: (aPortfolioTransactions includes: transaction).
+		]! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:12:28'!
+shouldHasNotRegisteredAnyTransaction: aPortfolio 		
+	self deny: (aPortfolio hasRegistered: (Deposit for: 100)).
+	self deny: (aPortfolio hasRegistered: (Withdraw for: 50)).! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:18:05'!
+shouldHasNotTransactions: aPortfolio 
+	self assert: 0 equals: aPortfolio transactions size.! !
+
+!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:27:25'!
+shouldHasZeroBalance: aPortfolio 
+		self assert: 0 equals: aPortfolio balance .! !
 
 
 !classDefinition: #ReceptiveAccountTest category: #'Portfolio-Ejercicio'!
