@@ -443,28 +443,31 @@ Object subclass: #FinancialAsset
 	poolDictionaries: ''
 	category: 'Portfolio-Ejercicio'!
 
-!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:16'!
-addTo: aBankThing
+!FinancialAsset methodsFor: 'transactions' stamp: 'LR 6/20/2020 15:03:28'!
+transactions
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:31'!
+
+!FinancialAsset methodsFor: 'balance' stamp: 'LR 6/20/2020 15:02:31'!
 balance
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:12'!
+
+!FinancialAsset methodsFor: 'testing' stamp: 'LR 6/20/2020 15:03:12'!
 has: aBankThing
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:02:52'!
+!FinancialAsset methodsFor: 'testing' stamp: 'LR 6/20/2020 15:02:52'!
 hasRegistered: aBankThing
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:05'!
+!FinancialAsset methodsFor: 'testing' stamp: 'LR 6/20/2020 15:03:05'!
 includes: aBankThing
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'as yet unclassified' stamp: 'LR 6/20/2020 15:03:28'!
-transactions
+
+!FinancialAsset methodsFor: 'private' stamp: 'LR 6/20/2020 15:02:16'!
+addTo: aBankThing
 	self subclassResponsibility ! !
 
 
@@ -478,6 +481,10 @@ FinancialAsset subclass: #Portfolio
 !Portfolio methodsFor: 'private' stamp: 'LR 6/20/2020 15:59:11'!
 addTo: aPortfolio 
 	parentPortfolios add: aPortfolio! !
+
+!Portfolio methodsFor: 'private' stamp: 'LR 6/21/2020 19:57:14'!
+processAllContent: aProcedure
+	^(content select: [:aFinancialAsset | aProcedure value: aFinancialAsset]) size > 0.! !
 
 !Portfolio methodsFor: 'private' stamp: 'LR 6/21/2020 19:49:31'!
 rootPortfolios
@@ -526,6 +533,10 @@ balance
 	^content sum: [:aFinancialAsset | aFinancialAsset balance] ifEmpty: [0].! !
 
 
+!Portfolio methodsFor: 'testing' stamp: 'LR 6/21/2020 19:56:49'!
+has: aReceptiveAccount
+	^self processAllContent: [:aFinancialAsset | aFinancialAsset has: aReceptiveAccount].! !
+
 !Portfolio methodsFor: 'testing' stamp: 'LR 6/21/2020 19:56:24'!
 hasRegistered: aTransaction 
 	| accountsWithATransaction |
@@ -537,18 +548,9 @@ hasRegistered: aTransaction
 	
 	^accountsWithATransaction size > 0.! !
 
-
-!Portfolio methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:56:49'!
-has: aReceptiveAccount
-	^self processAllContent: [:aFinancialAsset | aFinancialAsset has: aReceptiveAccount].! !
-
-!Portfolio methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:57:05'!
+!Portfolio methodsFor: 'testing' stamp: 'LR 6/21/2020 19:57:05'!
 includes: aFinancialAsset
 	^self processAllContent: [:financialAsset | financialAsset includes: aFinancialAsset].! !
-
-!Portfolio methodsFor: 'comparing' stamp: 'LR 6/21/2020 19:57:14'!
-processAllContent: aProcedure
-	^(content select: [:aFinancialAsset | aProcedure value: aFinancialAsset]) size > 0.! !
 
 
 !Portfolio methodsFor: 'validations' stamp: 'LR 6/21/2020 19:57:22'!
