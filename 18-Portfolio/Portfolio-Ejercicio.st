@@ -177,7 +177,7 @@ setUp
 	emptyAccount := ReceptiveAccount new.! !
 
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:51:02'!
+!PortfolioTest methodsFor: 'initialization' stamp: 'LR 6/21/2020 20:51:02'!
 accountWith: transactions
 	| account |
 	
@@ -190,7 +190,7 @@ accountWith: transactions
 	
 	^account! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 21:17:15'!
+!PortfolioTest methodsFor: 'initialization' stamp: 'LR 6/21/2020 21:17:15'!
 portfolioWith: contents
 	| newPortfolio |
 	newPortfolio := Portfolio new.
@@ -203,11 +203,12 @@ portfolioWith: contents
 	^newPortfolio 
 	! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:30:44'!
+
+!PortfolioTest methodsFor: 'assertions' stamp: 'LR 6/21/2020 20:30:44'!
 should: aPortfolio hasBalance: balanceAmount 
 	self assert: balanceAmount equals: aPortfolio balance.! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:13:38'!
+!PortfolioTest methodsFor: 'assertions' stamp: 'LR 6/21/2020 20:13:38'!
 should: aPortfolio hasRegistered: transactions
 
 	transactions do:[
@@ -216,7 +217,7 @@ should: aPortfolio hasRegistered: transactions
 		] 
 	! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:31:05'!
+!PortfolioTest methodsFor: 'assertions' stamp: 'LR 6/21/2020 20:31:05'!
 should: aPortfolio hasTransactions: transactions
 	| aPortfolioTransactions |
 	aPortfolioTransactions := aPortfolio transactions.
@@ -226,16 +227,16 @@ should: aPortfolio hasTransactions: transactions
 			self assert: (aPortfolioTransactions includes: transaction).
 		]! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:12:28'!
+!PortfolioTest methodsFor: 'assertions' stamp: 'LR 6/21/2020 20:12:28'!
 shouldHasNotRegisteredAnyTransaction: aPortfolio 		
 	self deny: (aPortfolio hasRegistered: (Deposit for: 100)).
 	self deny: (aPortfolio hasRegistered: (Withdraw for: 50)).! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:18:05'!
+!PortfolioTest methodsFor: 'assertions' stamp: 'LR 6/21/2020 20:18:05'!
 shouldHasNotTransactions: aPortfolio 
 	self assert: 0 equals: aPortfolio transactions size.! !
 
-!PortfolioTest methodsFor: 'testing' stamp: 'LR 6/21/2020 20:27:25'!
+!PortfolioTest methodsFor: 'assertions' stamp: 'LR 6/21/2020 20:27:25'!
 shouldHasZeroBalance: aPortfolio 
 		self assert: 0 equals: aPortfolio balance .! !
 
