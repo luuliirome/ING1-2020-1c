@@ -453,21 +453,21 @@ balance
 	self subclassResponsibility ! !
 
 
-!FinancialAsset methodsFor: 'testing' stamp: 'LR 6/20/2020 15:03:12'!
-has: aBankThing
+!FinancialAsset methodsFor: 'testing' stamp: 'SA 6/22/2020 00:39:09'!
+has: aFinancialAsset
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'testing' stamp: 'LR 6/20/2020 15:02:52'!
-hasRegistered: aBankThing
+!FinancialAsset methodsFor: 'testing' stamp: 'SA 6/22/2020 00:39:21'!
+hasRegistered: aFinancialAsset
 	self subclassResponsibility ! !
 
-!FinancialAsset methodsFor: 'testing' stamp: 'LR 6/20/2020 15:03:05'!
-includes: aBankThing
+!FinancialAsset methodsFor: 'testing' stamp: 'SA 6/22/2020 00:39:29'!
+includes: aFinancialAsset
 	self subclassResponsibility ! !
 
 
-!FinancialAsset methodsFor: 'private' stamp: 'LR 6/20/2020 15:02:16'!
-addTo: aBankThing
+!FinancialAsset methodsFor: 'private' stamp: 'SA 6/22/2020 00:38:56'!
+addTo: aFinancialAsset
 	self subclassResponsibility ! !
 
 
