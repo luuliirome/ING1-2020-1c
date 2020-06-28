@@ -690,7 +690,7 @@ for: aValue
 
 !classDefinition: #Transfer category: #'Portfolio-Solucion'!
 Object subclass: #Transfer
-	instanceVariableNames: 'incoming outgoing incomingTransferLeg outgoingTransferLeg'
+	instanceVariableNames: 'incoming outgoing value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
@@ -703,11 +703,16 @@ incoming
 outgoing
 	^outgoing ! !
 
+!Transfer methodsFor: 'accessing' stamp: 'LR 6/28/2020 17:56:25'!
+value
+	^value! !
 
-!Transfer methodsFor: 'initialization' stamp: 'LR 6/22/2020 21:31:03'!
-initializeFrom: anIncomingTransferLeg to: anOutgoingTransferLeg 
-	incomingTransferLeg := anIncomingTransferLeg.
-	outgoingTransferLeg := anOutgoingTransferLeg.! !
+
+!Transfer methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:54:28'!
+initializeFor: aValue
+	value := aValue.
+	incoming := TransferIncoming newFor: self.
+	outgoing := TransferOutgoing newFor: self.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -715,31 +720,21 @@ initializeFrom: anIncomingTransferLeg to: anOutgoingTransferLeg
 Transfer class
 	instanceVariableNames: 'incoming outgoing value'!
 
-!Transfer class methodsFor: 'instance creation' stamp: 'LR 6/22/2020 21:30:53'!
-from: anIncomingTransferLeg to: anOutgoingTransferLeg
-	^self new initializeFrom: anIncomingTransferLeg to: anOutgoingTransferLeg.
-	! !
+!Transfer class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:52:01'!
+newFor: aValue
+	^self new initializeFor: aValue.! !
 
-!Transfer class methodsFor: 'instance creation' stamp: 'LR 6/22/2020 21:28:59'!
+!Transfer class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:47:54'!
 register: aValue from: aSourceReceptiveAccount to: aDestinationReceptiveAccount
-	| deposit transfer withdraw incomingLeg outgoingLeg |
+	| transfer |
 	
 	aValue < 1 ifTrue: [self error: self negativeTransactionValueError ].
 	aSourceReceptiveAccount = aDestinationReceptiveAccount ifTrue: [self error: self invalidAccountErrorMsg ].
 	
-	withdraw := Withdraw for: aValue.
-	deposit := Deposit for: aValue.
-	
-	incomingLeg := TransferLeg register: deposit.
-	outgoingLeg := TransferLeg register: withdraw.
-	
-	transfer := Transfer from: outgoingLeg to: incomingLeg.
-	
-	incomingLeg transfer: transfer.
-	outgoingLeg transfer: transfer.
+	transfer := Transfer newFor: aValue.
 		
-	aSourceReceptiveAccount register: outgoing.
-	aDestinationReceptiveAccount register: incoming.! !
+	aSourceReceptiveAccount register: transfer outgoing.
+	aDestinationReceptiveAccount register: transfer incoming.! !
 
 
 !Transfer class methodsFor: 'errors' stamp: 'LR 6/22/2020 20:14:27'!
@@ -751,38 +746,61 @@ negativeTransactionValueError
 	^'transaction value must be positive'! !
 
 
-!classDefinition: #TransferLeg category: #'Portfolio-Solucion'!
-Object subclass: #TransferLeg
-	instanceVariableNames: 'transaction transfer'
+!classDefinition: #TransferIncoming category: #'Portfolio-Solucion'!
+Object subclass: #TransferIncoming
+	instanceVariableNames: 'transfer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Portfolio-Solucion'!
 
-!TransferLeg methodsFor: 'balance' stamp: 'LR 6/22/2020 21:20:41'!
+!TransferIncoming methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:49:27'!
+initializeFor: aTransfer
+	transfer := aTransfer.! !
+
+
+
+!TransferIncoming methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:03'!
 affectBalance: balance
-	^transaction affectBalance: balance! !
-
-
-!TransferLeg methodsFor: 'private - instantiation' stamp: 'LR 6/22/2020 21:31:15'!
-transfer: aTransfer 
-	transfer _ aTransfer! !
-
-
-!TransferLeg methodsFor: 'value' stamp: 'LR 6/22/2020 21:20:51'!
-value
-	^transaction value! !
-
-
-!TransferLeg methodsFor: 'initialization' stamp: 'LR 6/22/2020 21:30:09'!
-initializeFor: aTransaction 
-	transaction := aTransaction.! !
+	^balance + transfer value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'TransferLeg class' category: #'Portfolio-Solucion'!
-TransferLeg class
+!classDefinition: 'TransferIncoming class' category: #'Portfolio-Solucion'!
+TransferIncoming class
 	instanceVariableNames: ''!
 
-!TransferLeg class methodsFor: 'as yet unclassified' stamp: 'LR 6/22/2020 21:30:09'!
+!TransferIncoming class methodsFor: 'as yet unclassified' stamp: 'LR 6/28/2020 17:51:03'!
+newFor: aTransfer 
+	^self new initializeFor: aTransfer.! !
+
+
+!classDefinition: #TransferOutgoing category: #'Portfolio-Solucion'!
+Object subclass: #TransferOutgoing
+	instanceVariableNames: 'transfer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferOutgoing methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:13'!
+affectBalance: balance
+	^balance - transfer value! !
+
+
+
+!TransferOutgoing methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:51:31'!
+initializeFor: aTransfer
+	transfer := aTransfer.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TransferOutgoing class' category: #'Portfolio-Solucion'!
+TransferOutgoing class
+	instanceVariableNames: ''!
+
+!TransferOutgoing class methodsFor: 'as yet unclassified' stamp: 'LR 6/28/2020 17:51:09'!
+newFor: aTransfer 
+	^self new initializeFor: aTransfer.! !
+
+!TransferOutgoing class methodsFor: 'as yet unclassified' stamp: 'LR 6/22/2020 21:30:09'!
 register: aTransaction
 	^self new initializeFor: aTransaction ! !
