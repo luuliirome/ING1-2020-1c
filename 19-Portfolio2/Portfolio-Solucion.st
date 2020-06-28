@@ -252,13 +252,18 @@ test04IncomingTransferMustIncreaseBalance
 	Transfer register: 400 from: ReceptiveAccount new to: account.
 	self assert: 400 equals: account balance.! !
 
-!ReceptiveAccountTest methodsFor: 'test - transfers' stamp: 'LR 6/22/2020 21:38:37'!
+!ReceptiveAccountTest methodsFor: 'test - transfers' stamp: 'LR 6/28/2020 18:02:53'!
 test05FromATransferLegCanReachTheOtherLeg
-	| account transactions |
-	account := ReceptiveAccount new.
+	| accountSource accountDest transfer incomingTransfer outgoingTransfer |
+	accountSource := ReceptiveAccount new.
+	accountDest := ReceptiveAccount new.
 	
-	Transfer register: 400 from: ReceptiveAccount new to: account.
-	transactions := account transactions.! !
+	transfer := Transfer register: 400 from: accountSource to: accountDest.
+	incomingTransfer := transfer incoming.
+	outgoingTransfer := transfer outgoing.
+	
+	self assert: outgoingTransfer equals: incomingTransfer transfer outgoing.
+	self assert: incomingTransfer equals: outgoingTransfer transfer incoming.	! !
 
 
 !ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:19:48'!
@@ -724,7 +729,7 @@ Transfer class
 newFor: aValue
 	^self new initializeFor: aValue.! !
 
-!Transfer class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:47:54'!
+!Transfer class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 18:08:15'!
 register: aValue from: aSourceReceptiveAccount to: aDestinationReceptiveAccount
 	| transfer |
 	
@@ -734,7 +739,9 @@ register: aValue from: aSourceReceptiveAccount to: aDestinationReceptiveAccount
 	transfer := Transfer newFor: aValue.
 		
 	aSourceReceptiveAccount register: transfer outgoing.
-	aDestinationReceptiveAccount register: transfer incoming.! !
+	aDestinationReceptiveAccount register: transfer incoming.
+	
+	^transfer! !
 
 
 !Transfer class methodsFor: 'errors' stamp: 'LR 6/22/2020 20:14:27'!
@@ -758,10 +765,14 @@ initializeFor: aTransfer
 	transfer := aTransfer.! !
 
 
-
 !TransferIncoming methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:03'!
 affectBalance: balance
 	^balance + transfer value! !
+
+
+!TransferIncoming methodsFor: 'transfer' stamp: 'LR 6/28/2020 17:59:08'!
+transfer
+	^transfer! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -769,7 +780,7 @@ affectBalance: balance
 TransferIncoming class
 	instanceVariableNames: ''!
 
-!TransferIncoming class methodsFor: 'as yet unclassified' stamp: 'LR 6/28/2020 17:51:03'!
+!TransferIncoming class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:51:03'!
 newFor: aTransfer 
 	^self new initializeFor: aTransfer.! !
 
@@ -786,10 +797,14 @@ affectBalance: balance
 	^balance - transfer value! !
 
 
-
 !TransferOutgoing methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:51:31'!
 initializeFor: aTransfer
 	transfer := aTransfer.! !
+
+
+!TransferOutgoing methodsFor: 'transfer' stamp: 'LR 6/28/2020 17:59:26'!
+transfer
+	^transfer! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -797,10 +812,6 @@ initializeFor: aTransfer
 TransferOutgoing class
 	instanceVariableNames: ''!
 
-!TransferOutgoing class methodsFor: 'as yet unclassified' stamp: 'LR 6/28/2020 17:51:09'!
+!TransferOutgoing class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:51:09'!
 newFor: aTransfer 
 	^self new initializeFor: aTransfer.! !
-
-!TransferOutgoing class methodsFor: 'as yet unclassified' stamp: 'LR 6/22/2020 21:30:09'!
-register: aTransaction
-	^self new initializeFor: aTransaction ! !
