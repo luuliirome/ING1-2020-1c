@@ -1,3 +1,73 @@
+!classDefinition: #AccountSummaryReportTest category: #'Portfolio-Solucion'!
+TestCase subclass: #AccountSummaryReportTest
+	instanceVariableNames: 'expectedReport'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!AccountSummaryReportTest methodsFor: 'setUp/tearDown' stamp: 'LR 6/28/2020 20:27:59'!
+setUp
+	expectedReport := OrderedCollection with: 'Depósito por 400.' with: 'Extracción por 100.' 
+	with: 'Salida por transferencia de 50.' with:  'Entrada por transferencia de 10.'! !
+
+
+!AccountSummaryReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:27:21'!
+test01AnAccountWithNoTransactionsShouldReturnAnEmptyReportWithBalanceZero
+	| account accountReport |
+	account := ReceptiveAccount new.
+	accountReport := (AccountSummaryReport newFor: account) report.
+	
+	self assert: (OrderedCollection with: 'Balance = 0') equals: accountReport.! !
+
+!AccountSummaryReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:33:26'!
+test02AnAccountWithTransactionsShouldReturnCorrectReportWithCorrectBalance
+	| account1 account2 accountReport |
+	account2 := ReceptiveAccount new.
+	account1 := self accountWithOutgoingTransferTo: account2.
+	
+	accountReport := (AccountSummaryReport newFor: account1) report.
+	
+	expectedReport add: 'Balance = 260'.
+	
+	self assert: expectedReport equals: accountReport.! !
+
+!AccountSummaryReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:29:50'!
+test03APortfolioWithTransactionsShouldReturnCorrectReportWithCorrectBalance
+	| portfolio1 portfolio2 accountReport |
+	
+	portfolio2 := self portfolioWithAccounts.
+	portfolio1 := Portfolio with: portfolio2.
+	
+	accountReport := (AccountSummaryReport newFor: portfolio1) report.
+	
+	expectedReport add: 'Entrada por transferencia de 50.'. 
+	expectedReport add: 'Salida por transferencia de 10.'.
+	expectedReport add: 'Balance = 300'.
+	
+	self assert: expectedReport equals: accountReport.! !
+
+
+!AccountSummaryReportTest methodsFor: 'testing - private' stamp: 'LR 6/28/2020 20:32:27'!
+accountWithOutgoingTransferTo: anAccount
+	| account |
+	
+	account := ReceptiveAccount new.
+	
+	Deposit register: 400 on: account.
+	Withdraw register: 100 on: account.
+	Transfer register: 50 from: account to: anAccount.
+	Transfer register: 10 from: anAccount to: account.
+	
+	^account! !
+
+!AccountSummaryReportTest methodsFor: 'testing - private' stamp: 'LR 6/28/2020 20:32:57'!
+portfolioWithAccounts
+	| account1 account2 |
+	account2 := ReceptiveAccount new.
+	account1 := self accountWithOutgoingTransferTo: account2.
+	^Portfolio with: account1 with: account2.! !
+
+
 !classDefinition: #PortfolioTest category: #'Portfolio-Solucion'!
 TestCase subclass: #PortfolioTest
 	instanceVariableNames: ''
@@ -350,6 +420,53 @@ test07AccountKnowsItsTransactions
 ! !
 
 
+!classDefinition: #TransferNetReportTest category: #'Portfolio-Solucion'!
+TestCase subclass: #TransferNetReportTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:35:21'!
+accountWithOutgoingTransferTo: anAccount
+	| account |
+	
+	account := ReceptiveAccount new.
+	
+	Deposit register: 400 on: account.
+	Withdraw register: 100 on: account.
+	Transfer register: 100 from: account to: anAccount.
+	Transfer register: 10 from: anAccount to: account.
+	
+	^account! !
+
+!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 19:25:20'!
+test01ShouldReturnZeroWhenAnAccountWithNoTransfers
+	| transferNetReport |
+	
+	transferNetReport := (TransferNetReport newFor: ReceptiveAccount new) report.
+	self assert: 0 equals: transferNetReport.! !
+
+!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:35:04'!
+test02ShouldReturnCorrectValueWhenAnAccountWithTransfers
+	| transferNetReport account |
+	
+	account := self accountWithOutgoingTransferTo: ReceptiveAccount new.
+	transferNetReport := (TransferNetReport newFor: account) report.
+	self assert: -90 equals: transferNetReport.! !
+
+!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:36:33'!
+test03ShouldReturnZeroWhenPortfolioHasTwoAccountsThatTranfersEachOther
+	| transferNetReport account1 account2 |
+	
+	account1 := ReceptiveAccount new.
+	account2 := ReceptiveAccount new.
+	Transfer register: 100 from: account1 to: account2.
+	
+	transferNetReport := (TransferNetReport newFor: (Portfolio with: account1 with: account2)) report.
+	self assert: 0 equals: transferNetReport.! !
+
+
 !classDefinition: #Account category: #'Portfolio-Solucion'!
 Object subclass: #Account
 	instanceVariableNames: ''
@@ -604,6 +721,11 @@ affectBalance: aBalance
 
 	self subclassResponsibility ! !
 
+
+!AccountTransaction methodsFor: 'report' stamp: 'LR 6/28/2020 18:53:45'!
+report: aReporter
+	self subclassResponsibility ! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'AccountTransaction class' category: #'Portfolio-Solucion'!
@@ -645,6 +767,11 @@ affectBalance: aBalance
 
 	^aBalance + value ! !
 
+
+!Deposit methodsFor: 'report' stamp: 'LR 6/28/2020 18:59:42'!
+report: aReporter
+	^aReporter reportDeposit: self.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Deposit class' category: #'Portfolio-Solucion'!
@@ -655,6 +782,112 @@ Deposit class
 for: aValue
 
 	^ self new initializeFor: aValue ! !
+
+
+!classDefinition: #TransferLeg category: #'Portfolio-Solucion'!
+AccountTransaction subclass: #TransferLeg
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferLeg methodsFor: 'balance' stamp: 'LR 6/28/2020 18:36:02'!
+affectBalance
+	self subclassResponsibility ! !
+
+
+!TransferLeg methodsFor: 'value' stamp: 'LR 6/28/2020 18:36:05'!
+value
+	self subclassResponsibility ! !
+
+
+!TransferLeg methodsFor: 'report' stamp: 'LR 6/28/2020 18:53:31'!
+report: aReporter
+	self subclassResponsibility ! !
+
+
+!classDefinition: #TransferIncoming category: #'Portfolio-Solucion'!
+TransferLeg subclass: #TransferIncoming
+	instanceVariableNames: 'transfer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferIncoming methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:49:27'!
+initializeFor: aTransfer
+	transfer := aTransfer.! !
+
+
+!TransferIncoming methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:03'!
+affectBalance: balance
+	^balance + transfer value! !
+
+
+!TransferIncoming methodsFor: 'private' stamp: 'LR 6/28/2020 17:59:08'!
+transfer
+	^transfer! !
+
+
+!TransferIncoming methodsFor: 'value' stamp: 'LR 6/28/2020 18:34:02'!
+value
+	^transfer value! !
+
+
+!TransferIncoming methodsFor: 'report' stamp: 'LR 6/28/2020 18:59:49'!
+report: aReporter
+	^aReporter reportIncomingTransfer: self.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TransferIncoming class' category: #'Portfolio-Solucion'!
+TransferIncoming class
+	instanceVariableNames: ''!
+
+!TransferIncoming class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:51:03'!
+newFor: aTransfer 
+	^self new initializeFor: aTransfer.! !
+
+
+!classDefinition: #TransferOutgoing category: #'Portfolio-Solucion'!
+TransferLeg subclass: #TransferOutgoing
+	instanceVariableNames: 'transfer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferOutgoing methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:13'!
+affectBalance: balance
+	^balance - transfer value! !
+
+
+!TransferOutgoing methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:51:31'!
+initializeFor: aTransfer
+	transfer := aTransfer.! !
+
+
+!TransferOutgoing methodsFor: 'private' stamp: 'LR 6/28/2020 17:59:26'!
+transfer
+	^transfer! !
+
+
+!TransferOutgoing methodsFor: 'value' stamp: 'LR 6/28/2020 18:34:16'!
+value
+	^transfer value! !
+
+
+!TransferOutgoing methodsFor: 'report' stamp: 'LR 6/28/2020 18:59:55'!
+report: aReporter
+	^aReporter reportOutgoingTransfer: self.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TransferOutgoing class' category: #'Portfolio-Solucion'!
+TransferOutgoing class
+	instanceVariableNames: ''!
+
+!TransferOutgoing class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:51:09'!
+newFor: aTransfer 
+	^self new initializeFor: aTransfer.! !
 
 
 !classDefinition: #Withdraw category: #'Portfolio-Solucion'!
@@ -681,6 +914,11 @@ affectBalance: aBalance
 
 	^aBalance - value! !
 
+
+!Withdraw methodsFor: 'report' stamp: 'LR 6/28/2020 19:00:01'!
+report: aReporter
+	^aReporter reportWithdraw: self.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Withdraw class' category: #'Portfolio-Solucion'!
@@ -691,6 +929,152 @@ Withdraw class
 for: aValue
 
 	^ self new initializeFor: aValue ! !
+
+
+!classDefinition: #Report category: #'Portfolio-Solucion'!
+Object subclass: #Report
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!Report methodsFor: 'report' stamp: 'LR 6/28/2020 19:39:32'!
+report
+	self subclassResponsibility ! !
+
+
+!Report methodsFor: 'outgoing transfer' stamp: 'LR 6/28/2020 19:40:15'!
+reportOutgoingTransfer: aTransferOutgoing
+	self subclassResponsibility ! !
+
+
+!Report methodsFor: 'deposit' stamp: 'LR 6/28/2020 19:40:22'!
+reportDeposit: aDeposit
+	self subclassResponsibility ! !
+
+
+!Report methodsFor: 'incoming transfer' stamp: 'LR 6/28/2020 19:40:04'!
+reportIncomingTransfer: aTransferIncoming
+	self subclassResponsibility ! !
+
+
+!Report methodsFor: 'withdraw' stamp: 'LR 6/28/2020 19:40:34'!
+reportWithdraw: aWithdraw 
+	self subclassResponsibility ! !
+
+
+!classDefinition: #AccountSummaryReport category: #'Portfolio-Solucion'!
+Report subclass: #AccountSummaryReport
+	instanceVariableNames: 'account'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!AccountSummaryReport methodsFor: 'report' stamp: 'LR 6/28/2020 19:02:08'!
+balanceReport
+	^'Balance = ', account balance asString.! !
+
+!AccountSummaryReport methodsFor: 'report' stamp: 'LR 6/28/2020 19:10:27'!
+report
+	| reportSummary |
+	reportSummary := OrderedCollection new.
+	
+	account transactions do: [
+			:transaction |
+			reportSummary add: (transaction report: self).
+		].
+	
+	reportSummary add: self balanceReport.
+	^reportSummary! !
+
+!AccountSummaryReport methodsFor: 'report' stamp: 'LR 6/28/2020 19:12:35'!
+transactionValueAsString: aTransaction
+	^aTransaction value asString, '.'! !
+
+
+!AccountSummaryReport methodsFor: 'initialization' stamp: 'LR 6/28/2020 18:21:42'!
+initializeFor: anAccount
+	account := anAccount! !
+
+
+!AccountSummaryReport methodsFor: 'deposit' stamp: 'LR 6/28/2020 19:15:22'!
+reportDeposit: aDeposit
+	^'Depósito por ', (self transactionValueAsString: aDeposit).! !
+
+
+!AccountSummaryReport methodsFor: 'withdraw' stamp: 'LR 6/28/2020 19:15:30'!
+reportWithdraw: aWithdraw 
+	^'Extracción por ', (self transactionValueAsString: aWithdraw).! !
+
+
+!AccountSummaryReport methodsFor: 'incoming transfer' stamp: 'LR 6/28/2020 19:15:37'!
+reportIncomingTransfer: aTransferIncoming 
+	^'Entrada por transferencia de ', (self transactionValueAsString: aTransferIncoming).! !
+
+
+!AccountSummaryReport methodsFor: 'outgoing transfer' stamp: 'LR 6/28/2020 19:15:43'!
+reportOutgoingTransfer: aTransferOutgoing 
+	^'Salida por transferencia de ', (self transactionValueAsString: aTransferOutgoing).! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountSummaryReport class' category: #'Portfolio-Solucion'!
+AccountSummaryReport class
+	instanceVariableNames: ''!
+
+!AccountSummaryReport class methodsFor: 'as yet unclassified' stamp: 'LR 6/28/2020 18:21:23'!
+newFor: anAccount
+	^self new initializeFor: anAccount! !
+
+
+!classDefinition: #TransferNetReport category: #'Portfolio-Solucion'!
+Report subclass: #TransferNetReport
+	instanceVariableNames: 'account'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Portfolio-Solucion'!
+
+!TransferNetReport methodsFor: 'initialization' stamp: 'LR 6/28/2020 19:25:49'!
+initializeFor: anAccount 
+	account := anAccount.! !
+
+
+!TransferNetReport methodsFor: 'deposit' stamp: 'LR 6/28/2020 19:35:48'!
+reportDeposit: aDeposit 
+	^0.! !
+
+
+!TransferNetReport methodsFor: 'incoming transfer' stamp: 'LR 6/28/2020 19:31:09'!
+reportIncomingTransfer: aTransferIncoming 
+	^aTransferIncoming value.! !
+
+
+!TransferNetReport methodsFor: 'withdraw' stamp: 'LR 6/28/2020 19:35:56'!
+reportWithdraw: aWithdraw 
+	^0! !
+
+
+!TransferNetReport methodsFor: 'outgoing transfer' stamp: 'LR 6/28/2020 19:30:13'!
+reportOutgoingTransfer: aTransferOutgoing 
+	^aTransferOutgoing value * (-1).! !
+
+
+!TransferNetReport methodsFor: 'report' stamp: 'LR 6/28/2020 19:35:09'!
+report
+	^account transactions inject: 0 into: [
+			:accum :transaction |
+				accum + (transaction report: self).
+		].! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TransferNetReport class' category: #'Portfolio-Solucion'!
+TransferNetReport class
+	instanceVariableNames: ''!
+
+!TransferNetReport class methodsFor: 'as yet unclassified' stamp: 'LR 6/28/2020 19:25:41'!
+newFor: anAccount
+	^self new initializeFor: anAccount.! !
 
 
 !classDefinition: #Transfer category: #'Portfolio-Solucion'!
@@ -751,67 +1135,3 @@ invalidAccountErrorMsg
 !Transfer class methodsFor: 'errors' stamp: 'LR 6/22/2020 20:01:17'!
 negativeTransactionValueError
 	^'transaction value must be positive'! !
-
-
-!classDefinition: #TransferIncoming category: #'Portfolio-Solucion'!
-Object subclass: #TransferIncoming
-	instanceVariableNames: 'transfer'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Solucion'!
-
-!TransferIncoming methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:49:27'!
-initializeFor: aTransfer
-	transfer := aTransfer.! !
-
-
-!TransferIncoming methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:03'!
-affectBalance: balance
-	^balance + transfer value! !
-
-
-!TransferIncoming methodsFor: 'transfer' stamp: 'LR 6/28/2020 17:59:08'!
-transfer
-	^transfer! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'TransferIncoming class' category: #'Portfolio-Solucion'!
-TransferIncoming class
-	instanceVariableNames: ''!
-
-!TransferIncoming class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:51:03'!
-newFor: aTransfer 
-	^self new initializeFor: aTransfer.! !
-
-
-!classDefinition: #TransferOutgoing category: #'Portfolio-Solucion'!
-Object subclass: #TransferOutgoing
-	instanceVariableNames: 'transfer'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Portfolio-Solucion'!
-
-!TransferOutgoing methodsFor: 'balance' stamp: 'LR 6/28/2020 17:55:13'!
-affectBalance: balance
-	^balance - transfer value! !
-
-
-!TransferOutgoing methodsFor: 'initialization' stamp: 'LR 6/28/2020 17:51:31'!
-initializeFor: aTransfer
-	transfer := aTransfer.! !
-
-
-!TransferOutgoing methodsFor: 'transfer' stamp: 'LR 6/28/2020 17:59:26'!
-transfer
-	^transfer! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'TransferOutgoing class' category: #'Portfolio-Solucion'!
-TransferOutgoing class
-	instanceVariableNames: ''!
-
-!TransferOutgoing class methodsFor: 'instance creation' stamp: 'LR 6/28/2020 17:51:09'!
-newFor: aTransfer 
-	^self new initializeFor: aTransfer.! !
