@@ -336,8 +336,8 @@ test05FromATransferLegCanReachTheOtherLeg
 	self assert: incomingTransfer equals: outgoingTransfer transfer incoming.	! !
 
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:19:48'!
-test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'SA 6/29/2020 13:43:36'!
+test01ReceptiveAccountShouldHaveBalanceZeroWhenCreated 
 
 	| account |
 	
@@ -346,8 +346,8 @@ test01ReceptiveAccountHaveZeroAsBalanceWhenCreated
 	self assert: 0 equals: account balance .
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:19:54'!
-test02DepositIncreasesBalanceOnTransactionValue 
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'SA 6/29/2020 13:44:48'!
+test02WhenDepositShouldIncreasesBalanceOnReceptiveAccount 
 
 	| account |
 	
@@ -357,8 +357,8 @@ test02DepositIncreasesBalanceOnTransactionValue
 	self assert: 100 equals: account balance .
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:20:02'!
-test03WithdrawDecreasesBalanceOnTransactionValue 
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'SA 6/29/2020 13:45:09'!
+test03WhenWithdrawingShouldDecreasesBalanceOnReceptiveAccount 
 
 	| account |
 	
@@ -380,8 +380,8 @@ test04WithdrawValueMustBePositive
 	self assert: withdrawValue equals: (Withdraw register: withdrawValue on: account) value
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:20:46'!
-test05ReceptiveAccountKnowsRegisteredTransactions 
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'SA 6/29/2020 13:45:31'!
+test05ReceptiveAccountShouldKnowsRegisteredTransactions 
 
 	| account deposit withdraw |
 	
@@ -393,8 +393,8 @@ test05ReceptiveAccountKnowsRegisteredTransactions
 	self assert: (account hasRegistered: withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:20:54'!
-test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'SA 6/29/2020 13:46:01'!
+test06ReceptiveAccountShouldNottKnowNotRegisteredTransactions
 
 	| account deposit withdraw |
 	
@@ -406,8 +406,8 @@ test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
 	self deny: (account hasRegistered:withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'HAW 5/23/2019 15:21:24'!
-test07AccountKnowsItsTransactions 
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'SA 6/29/2020 13:46:27'!
+test07AccountShouldKnowsHisTransactions 
 
 	| account1 deposit1 |
 	
@@ -440,23 +440,23 @@ accountWithOutgoingTransferTo: anAccount
 	
 	^account! !
 
-!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 19:25:20'!
-test01ShouldReturnZeroWhenAnAccountWithNoTransfers
+!TransferNetReportTest methodsFor: 'testing' stamp: 'SA 6/29/2020 13:40:12'!
+test01ShouldReturnZeroNetValueWhenReportinAnAccountWithNoTransfers
 	| transferNetReport |
 	
 	transferNetReport := (TransferNetReport newFor: ReceptiveAccount new) report.
 	self assert: 0 equals: transferNetReport.! !
 
-!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:35:04'!
-test02ShouldReturnCorrectValueWhenAnAccountWithTransfers
+!TransferNetReportTest methodsFor: 'testing' stamp: 'SA 6/29/2020 13:38:51'!
+test02ShouldReturnCorrectNetValueWhenReportingAnAccountWithTransfers
 	| transferNetReport account |
 	
 	account := self accountWithOutgoingTransferTo: ReceptiveAccount new.
 	transferNetReport := (TransferNetReport newFor: account) report.
 	self assert: -90 equals: transferNetReport.! !
 
-!TransferNetReportTest methodsFor: 'testing' stamp: 'LR 6/28/2020 20:36:33'!
-test03ShouldReturnZeroWhenPortfolioHasTwoAccountsThatTranfersEachOther
+!TransferNetReportTest methodsFor: 'testing' stamp: 'SA 6/29/2020 13:39:38'!
+test03ShouldReturnZeroNetValueWhenReportingAPortfolioWithTwoAccountsThatTranfersEachOther
 	| transferNetReport account1 account2 |
 	
 	account1 := ReceptiveAccount new.
