@@ -171,6 +171,14 @@ setUp
 	testObjects := TestObjects new.! !
 
 
+!CashierTest methodsFor: 'testing - private' stamp: 'LR 7/15/2020 20:34:07'!
+createCashierWithMerchantProcessor: aMerchantProcessor
+	|cart|
+	cart := testObjects createCart.
+	cart add: testObjects itemSellByTheStore.
+	^Cashier withCart: cart using: testObjects createCard registerOn: salesBook withMerchantProcessor: aMerchantProcessor.! !
+
+
 !CashierTest methodsFor: 'testing' stamp: 'LR 7/13/2020 21:15:27'!
 test01CantCreateCashierWithEmptyCart
 	self should: [
@@ -182,19 +190,10 @@ test01CantCreateCashierWithEmptyCart
 	withExceptionDo: [ :anError |
 			self assert: anError messageText = Cashier emptyCartErrorMessage.]! !
 
-!CashierTest methodsFor: 'testing' stamp: 'LR 7/13/2020 21:15:35'!
-test02CantCheckoutWithAnExpiredCard
-	| cart cashier |
-	
-	cart := testObjects createCart.
-	cart add: testObjects itemSellByTheStore.
-	cashier := Cashier withCart: cart using: testObjects createCard registerOn: salesBook withMerchantProcessor: testObjects merchantProcessorDoingNothing.
-
-	self should: [cashier checkoutAt: testObjects passDueDate ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [ :anError |
-			self assert: anError messageText = Cashier expiredCardErrorMessage.
-			self assert: salesBook isEmpty.]! !
+!CashierTest methodsFor: 'testing' stamp: 'LR 7/15/2020 20:48:02'!
+test02CantCheckoutWithAnExpiredCard	
+	self assertCheckoutShouldRaiseExpiredCardErrorWithMerchantProcessor: testObjects merchantProcessorDoingNothing..
+	self assert: salesBook isEmpty.! !
 
 !CashierTest methodsFor: 'testing' stamp: 'LR 7/13/2020 21:15:39'!
 test03SalesBookIsModifyWhenCheckouting
@@ -208,26 +207,42 @@ test03SalesBookIsModifyWhenCheckouting
 	self assert: (salesBook includes: cart total). 
 	self assert: 1 equals: salesBook size.! !
 
-!CashierTest methodsFor: 'testing' stamp: 'LR 7/13/2020 21:18:37'!
-test04RaiseErrorWhenCheckoutIfMerchantProcessor
+!CashierTest methodsFor: 'testing' stamp: 'LR 7/15/2020 20:34:47'!
+test04RaiseErrorWhenCheckoutIfMerchantProcessorFails
 	"No me importa el error que retorne el merchant processor, ante un error, retorno.
 	Otro objeto es responsable de catchear el error de si el MP está caido para generar el pedido en un archivo de input"
 	
-	| cart cashier |
+	| cashier |
 
-	
-	cart := testObjects createCart.
-	cart add: testObjects itemSellByTheStore.
-	cashier := Cashier withCart: cart 
-	using: testObjects createCard 
-	registerOn: salesBook 
-	withMerchantProcessor: (testObjects merchantProcessorDoing: [self error: 'error with merchant processor']).
+	cashier := self createCashierWithMerchantProcessor: (testObjects merchantProcessorDoing: [self error: 'error with merchant processor']).
 
 	self should: [cashier checkoutAt: testObjects beforeDueDate.]
 	raise: Error - MessageNotUnderstood 
 	withExceptionDo: [ :anError |
 			self assert: anError messageText = MerchantProcessorSimulator simulatedErrorMessage.
 			self assert: salesBook isEmpty.]! !
+
+!CashierTest methodsFor: 'testing' stamp: 'LR 7/15/2020 20:48:18'!
+test05MerchantProcessorIsNotCalledWhenCheckoutWithAnExpiredCard
+	| merchantProcessor |
+	
+	merchantProcessor := testObjects merchantProcessorDoingNothing.
+	self assertCheckoutShouldRaiseExpiredCardErrorWithMerchantProcessor: merchantProcessor.
+	self deny: merchantProcessor wasCalled.
+! !
+
+
+!CashierTest methodsFor: 'as yet unclassified' stamp: 'LR 7/15/2020 20:48:02'!
+assertCheckoutShouldRaiseExpiredCardErrorWithMerchantProcessor: aMerchantProcessor
+	| cashier |
+	cashier := self createCashierWithMerchantProcessor: aMerchantProcessor.
+	
+	self should: [cashier checkoutAt: testObjects passDueDate ]
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [ :anError |
+			self assert: anError messageText = Cashier expiredCardErrorMessage.
+	].
+	! !
 
 
 !classDefinition: #TestObjects category: #TusLibros!
@@ -517,19 +532,26 @@ Object subclass: #MerchantProcessor
 
 !classDefinition: #MerchantProcessorSimulator category: #TusLibros!
 MerchantProcessor subclass: #MerchantProcessorSimulator
-	instanceVariableNames: 'debitBehaviour'
+	instanceVariableNames: 'debitBehaviour wasCalled'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!MerchantProcessorSimulator methodsFor: 'value' stamp: 'LR 7/13/2020 21:17:53'!
+!MerchantProcessorSimulator methodsFor: 'value' stamp: 'LR 7/15/2020 20:07:27'!
 debit: anAmount from: aCard
+	wasCalled := true.
 	debitBehaviour value! !
 
 
-!MerchantProcessorSimulator methodsFor: 'initialization' stamp: 'LR 7/13/2020 21:17:30'!
+!MerchantProcessorSimulator methodsFor: 'initialization' stamp: 'LR 7/15/2020 20:07:14'!
 doing: aBlockClosure 
-	debitBehaviour := aBlockClosure ! !
+	debitBehaviour := aBlockClosure .
+	wasCalled := false.! !
+
+
+!MerchantProcessorSimulator methodsFor: 'testing' stamp: 'LR 7/15/2020 20:06:38'!
+wasCalled
+	^wasCalled! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
