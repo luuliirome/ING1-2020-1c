@@ -115,7 +115,7 @@ test05CanNotAddMoreThanOneItemNotSellByTheStore
 			self assert: anError messageText = cart invalidItemErrorMessage.
 			self assert: cart isEmpty ]! !
 
-!CartTest methodsFor: 'tests' stamp: 'LR 7/13/2020 18:47:24'!
+!CartTest methodsFor: 'tests' stamp: 'SA 7/16/2020 14:14:36'!
 test06CartRemembersAddedItems
 
 	| cart |
@@ -123,7 +123,7 @@ test06CartRemembersAddedItems
 	cart := testObjects createCart.
 	
 	cart add: testObjects itemSellByTheStore.
-	self assert: (cart includes: self itemSellByTheStore)! !
+	self assert: (cart includes: testObjects itemSellByTheStore)! !
 
 !CartTest methodsFor: 'tests' stamp: 'LR 7/13/2020 18:47:31'!
 test07CartDoesNotHoldNotAddedItems
@@ -338,9 +338,9 @@ initializeWithID: anIDNumber for: anOwner until: aDueDate
 	dueDate := aDueDate.! !
 
 
-!Card methodsFor: 'assertions' stamp: 'LR 7/12/2020 22:14:47'!
+!Card methodsFor: 'assertions' stamp: 'SA 7/16/2020 14:15:45'!
 assertValidIDNumber: anIDNumber
-	(anIDNumber size ~= 16 or: (self areAllNumbers: anIDNumber) not )
+	(anIDNumber size ~= 16 or: (self areAllNumberDigits: anIDNumber) not )
 	ifTrue: [^self error: self class invalidIDErrorMessage].
 	! !
 
@@ -355,8 +355,8 @@ isExpiredOn: aDate
 	or: aDate year > dueDate year! !
 
 
-!Card methodsFor: 'private' stamp: 'LR 7/12/2020 22:15:00'!
-areAllNumbers: anIDNumber	
+!Card methodsFor: 'private' stamp: 'SA 7/16/2020 14:15:45'!
+areAllNumberDigits: anIDNumber	
 	^anIDNumber allSatisfy: [:digit | self validDigits includes: digit ].
 	! !
 
