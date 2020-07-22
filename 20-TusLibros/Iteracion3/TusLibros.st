@@ -303,285 +303,13 @@ TestCase subclass: #ExternalInterfaceTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 20:27:05'!
-test01CantCreateCartWhenUsingInvalidPasswordAndClientID
-
-	| rest authenticationErrorMsg |
-	
-	authenticationErrorMsg := 'invalid user and password'.
-	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: [self error: authenticationErrorMsg]) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: nil.
-	self should: [rest createCartFor: 'user' withPassword: 'password']
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo:   [:anError |
-			self assert: anError messageText = authenticationErrorMsg.]
-		
-		
-		"Hablar del tema de authentication con error. Nos parecía que tenía más sentido que al intentar authenticar, falle; al implementar el mensaje isAuthenticated"! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test02CreateCartReturnsAValidCartIDWhenUsingValidParams
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	self assert: (rest listCart: cartID) isEmpty.! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test03CantAddToCartWhenUsingNonPositiveNumberOfItems
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	
-	self should: [rest add: 0 of: testObjects itemSellByTheStore toCart: cartID]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = 'Invalid number of items'.
-			self assert: (rest listCart: cartID) isEmpty.
-		]
-	! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test04CantAddToCartAnItemNotSellByTheStore
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	self should: [rest add: 2 of: testObjects itemNotSellByTheStore toCart: cartID]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = 'Item is not in catalog'.
-			self assert: (rest listCart: cartID) isEmpty.
-		]
-	! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:21:04'!
-test05CantAddToCartWithInvalidCartID
-
-	| rest invalidCartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	invalidCartID := 'invalid-cart-id'.
-	self should: [rest add: 2 of: testObjects itemSellByTheStore toCart: invalidCartID]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
-		]
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test06ListCartShowsItemsAdded
-
-	| rest cartID cartContent |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	rest add: 2 of: testObjects itemSellByTheStore toCart: cartID.
-	
-	cartContent := rest listCart: cartID.
-	self assert: 2 equals: (cartContent occurrencesOf: testObjects itemSellByTheStore).
-	self assert: 2 equals: cartContent size.! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:21:04'!
-test07CantListCartWithInvalidCartID
-
-	| rest invalidCartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	invalidCartID := 'invalid-cart-id'.
-	
-	self should: [rest listCart: invalidCartID]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
-		]
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:21:04'!
-test08CantCheckoutCartWithInvalidCartID
-
-	| rest invalidCartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	invalidCartID := 'invalid-cart-id'.
-	
-	self should: [rest checkout: invalidCartID usingCardNumber: '1234' withCardDueDate: testObjects dueDate withCardOwner: 'owner']
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
-			self assert: rest salesBook isEmpty.
-		].
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test09CantCheckoutCartWithInvalidCardNumber
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	
-	self should: [rest checkout: cartID usingCardNumber: '1234' withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = Card invalidIDErrorMessage.
-			self assert: rest salesBook isEmpty.
-		].
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test10CantCheckoutCartWithInvalidCardOwner
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	
-	self should: [rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects invalidOwner ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = Card invalidOwnerErrorMessage .
-			self assert: rest salesBook isEmpty.
-		].
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test11CantCheckoutCartWithEmptyCart
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [^testObjects passDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	
-	self should: [rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = Cashier emptyCartErrorMessage .
-			self assert: rest salesBook isEmpty.
-		].
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test12CantCheckoutCartWithExpiredCard
-
-	| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects passDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	
-	self should: [rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = Cashier expiredCardErrorMessage.
-			self assert: rest salesBook isEmpty.
-		].
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test13CantCheckoutWhenErrorWithMerchantProcessor
-| rest cartID |
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: (testObjects merchantProcessorDoing: [self error: 'error with merchant processor']) withCalendar: testObjects calendar.
-	
-	cartID := rest createCartFor: 'user' withPassword: 'password'.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	
-	self should: [rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = 'error with merchant processor'.
-			self assert: rest salesBook isEmpty.
-		].
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test14SalesBookTotalCorrectWhenCheckoutCart
-	| rest cartID |
-	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.
-	
-	self assert: 4000 equals: (rest salesBook at: 1) total.
-! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:15:51'!
-test15CantListPurchasesOfInvalidClientID
-	| rest |
-	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	self should: [rest listPurchases: 'invalid-client-id'.]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = ExternalInterface invalidClientErrorMessage.
-			self assert: rest salesBook isEmpty.
-		]! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:30:06'!
-test16ListPurchasesOfClientWithNoPurchasesShouldReturnEmptyListOfSales
-	| rest |
-	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	
-	rest createCartFor: testObjects clientID withPassword: 'password'.
-	
-	self assert: ((rest listPurchases: testObjects clientID) at: 'items') isEmpty.
-	self assert: 0 equals: ((rest listPurchases: testObjects clientID) at: 'total').	
-	
-	! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:31:05'!
-test17ListPurchasesOfClientWithOnePurchaseShouldReturnListOfSales
-	| rest cartID purchases |
-	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	
-	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.
-	
-	purchases := rest listPurchases: testObjects clientID.
-	self assert: 4 equals: (purchases at: 'items') size.
-	self assert: 4000 equals: (purchases at: 'total').
-	self assert: 4 equals: ((purchases at: 'items') occurrencesOf: testObjects itemSellByTheStore).
-	
-	! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:28:59'!
-test18ListPurchasesOfClientWithSeveralPurchasesShouldReturnListOfSales
-	| rest cartID purchases |
-	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
-	
-	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.
-
-
-	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
-	rest add: 5 of: testObjects anotherItemSellByTheStore toCart: cartID.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.
-	
-	purchases := rest listPurchases: testObjects clientID.
-	self assert: 2 equals: purchases size.
-	
-	self assert: 10500 equals: (purchases at: 'total').
-	self assert: 8 equals: ((purchases at: 'items') occurrencesOf: testObjects itemSellByTheStore).
-	self assert: 5 equals: ((purchases at: 'items') occurrencesOf: testObjects anotherItemSellByTheStore).! !
-
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:21:04'!
+!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/22/2020 19:50:06'!
 test19CantCheckoutACartAlreadyCheckouted
 
 "Solo chequeamos este caso, ya que por la implementación, una vez hecho el checkout, el cart pasa a ser INVALIDO, y el caso de carrito invalido con cada operacion ya está chequeado."
 	| rest cartID |
 	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: testObjects calendar.
+	rest := self createRest.
 	
 	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
 	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
@@ -599,14 +327,14 @@ test19CantCheckoutACartAlreadyCheckouted
 	
 	! !
 
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/20/2020 21:21:04'!
+!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/22/2020 19:50:50'!
 test20CantDoAnythingWithAnExpiredCart
 
 	| rest cartID calendar |
 	
-	calendar := testObjects calendar.
+	calendar := self calendar.
 	
-	rest := ExternalInterface withAuthentication: (testObjects authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: calendar.
+	rest := self createRestWithCalendar: calendar.
 	
 	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
 	calendar now: testObjects expiredDateTime.
@@ -623,9 +351,325 @@ test20CantDoAnythingWithAnExpiredCart
 	! !
 
 
+!ExternalInterfaceTest methodsFor: 'testing - create cart' stamp: 'LR 7/22/2020 19:40:20'!
+test01CantCreateCartWhenUsingInvalidPasswordAndClientID
+
+	| rest authenticationErrorMsg |
+	
+	authenticationErrorMsg := 'invalid user and password'.
+	rest := self createRestWithAuth: [self error: authenticationErrorMsg].
+	
+	self should: [rest createCartFor: 'user' withPassword: 'password']
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo:   [:anError |
+			self assert: anError messageText = authenticationErrorMsg.]
+		
+		
+		"Nos parecía que tenía más sentido que al intentar authenticar, falle; contra el implementar el mensaje isAuthenticated"! !
+
+!ExternalInterfaceTest methodsFor: 'testing - create cart' stamp: 'LR 7/22/2020 19:55:17'!
+test02CreateCartReturnsAValidCartIDWhenUsingValidParams
+
+	| rest cartID |
+	rest := self createRest.
+	cartID := self createCartBy: rest.
+	self assert: (rest listCart: cartID) isEmpty.! !
+
+
+!ExternalInterfaceTest methodsFor: 'testing - list cart' stamp: 'LR 7/22/2020 20:11:23'!
+test07CantListCartWithInvalidCartID
+"Por como se crean los ids de los carts, invalid-cat-id podemos garantizar que es siempre invalido"
+	self assertRaiseInvalidCartIDException: [:anExternalInterface | anExternalInterface listCart: 'invalid-cart-id'].
+! !
+
+
+!ExternalInterfaceTest methodsFor: 'testing - add item' stamp: 'LR 7/22/2020 20:00:39'!
+test03CantAddToCartWhenUsingNonPositiveNumberOfItems
+	self assertCantAdd: 0 of: testObjects itemSellByTheStore raising: 'Invalid number of items'.
+	! !
+
+!ExternalInterfaceTest methodsFor: 'testing - add item' stamp: 'LR 7/22/2020 20:01:03'!
+test04CantAddToCartAnItemNotSellByTheStore
+	self assertCantAdd: 4 of: testObjects itemNotSellByTheStore raising: 'Item is not in catalog'.! !
+
+!ExternalInterfaceTest methodsFor: 'testing - add item' stamp: 'LR 7/22/2020 20:12:11'!
+test05CantAddToCartWithInvalidCartID
+	self assertRaiseInvalidCartIDException: 
+	[:anExternalInterface | 
+		anExternalInterface add: 2 of: testObjects itemSellByTheStore toCart: 'invalid-cart-id'].
+! !
+
+!ExternalInterfaceTest methodsFor: 'testing - add item' stamp: 'LR 7/22/2020 19:35:52'!
+test06ListCartShowsItemsAdded
+
+	| rest cartID cartContent |
+	rest := self createRest.
+	cartID := self createCartBy: rest.
+	rest add: 2 of: testObjects itemSellByTheStore toCart: cartID.
+	
+	cartContent := rest listCart: cartID.
+	self assert: 2 equals: (cartContent occurrencesOf: testObjects itemSellByTheStore).
+	self assert: 2 equals: cartContent size.! !
+
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:18:39'!
+test08CantCheckoutCartWithInvalidCartID
+
+	| rest invalidCartID |
+	rest := self createRest.
+	invalidCartID := 'invalid-cart-id'.
+
+	self assertCantCheckout: invalidCartID 
+	usingCardNumber: '1234' 
+	withCardDueDate: testObjects dueDate 
+	withCardOwner: 'owner' 
+	raising: ExternalInterface invalidCartErrorMessage 
+	using: rest.! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:20:39'!
+test09CantCheckoutCartWithInvalidCardNumber
+	
+	| rest cartID |
+	rest := self createRest.
+	cartID := self createCartBy: rest.
+
+	self assertCantCheckout: cartID 
+	usingCardNumber: '1234' 
+	withCardDueDate: testObjects dueDate 
+	withCardOwner: 'owner' 
+	raising: Card invalidIDErrorMessage 
+	using: rest.
+! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:20:33'!
+test10CantCheckoutCartWithInvalidCardOwner
+
+	| rest cartID |
+	rest := self createRest.
+	cartID := self createCartBy: rest.
+	
+	self assertCantCheckout: cartID 
+	usingCardNumber: testObjects validIDNumber 
+	withCardDueDate: testObjects dueDate 
+	withCardOwner: testObjects invalidOwner
+	raising: Card invalidOwnerErrorMessage 
+	using: rest.
+! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:21:22'!
+test11CantCheckoutCartWithEmptyCart
+
+	| rest cartID |
+	rest := self createRest.
+	cartID := self createCartBy: rest.
+	
+	self assertCantCheckout: cartID 
+	usingCardNumber: testObjects validIDNumber 
+	withCardDueDate: testObjects dueDate 
+	withCardOwner: testObjects validOwner
+	raising: Cashier emptyCartErrorMessage
+	using: rest.
+! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:22:10'!
+test12CantCheckoutCartWithExpiredCard
+
+	| rest cartID |
+	rest := self createRestWithBankCalendarDoing: [testObjects passDueDate].
+	cartID := self createCartBy: rest.
+	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
+	
+	self assertCantCheckout: cartID 
+	usingCardNumber: testObjects validIDNumber 
+	withCardDueDate: testObjects dueDate 
+	withCardOwner: testObjects validOwner
+	raising: Cashier expiredCardErrorMessage
+	using: rest.
+
+! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:22:38'!
+test13CantCheckoutWhenErrorWithMerchantProcessor
+| rest cartID |
+	rest := self createRestWithMerchantProcessorDoing: [self error: 'error with merchant processor'].
+	
+	cartID := self createCartBy: rest.
+	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
+		
+	self assertCantCheckout: cartID 
+	usingCardNumber: testObjects validIDNumber 
+	withCardDueDate: testObjects dueDate 
+	withCardOwner: testObjects validOwner
+	raising: 'error with merchant processor'
+	using: rest.! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 19:48:30'!
+test14SalesBookTotalCorrectWhenCheckoutCart
+	| rest |
+	
+	rest := self createRestWithBankCalendarDoing: [testObjects beforeDueDate].
+	self newPurchase: {4} of: {testObjects itemSellByTheStore} using: rest.
+	self assert: 4000 equals: (rest salesBook at: 1) total.
+! !
+
+
+!ExternalInterfaceTest methodsFor: 'testing - list purchases' stamp: 'LR 7/22/2020 19:48:49'!
+test15CantListPurchasesIfAuthenticationFails
+	| rest authenticationErrorMsg |
+	
+	authenticationErrorMsg := 'invalid user and password'.
+	
+	rest := self createRestWithAuth: [self error: authenticationErrorMsg].
+	
+	self should: [rest listPurchasesOf: 'user' withPassword: 'password']
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo:   [:anError |
+			self assert: anError messageText = authenticationErrorMsg.]
+	
+	! !
+
+!ExternalInterfaceTest methodsFor: 'testing - list purchases' stamp: 'LR 7/22/2020 19:48:53'!
+test16ListPurchasesOfClientWithNoPurchasesShouldReturnEmptyListAndZeroAsTotal
+	| rest listPurchases |
+	
+	rest := self createRest.
+	listPurchases := rest listPurchasesOf: testObjects clientID withPassword: 'password'.
+	self assert: ( listPurchases at: 'items') isEmpty.
+	self assert: 0 equals: (listPurchases at: 'total').	
+	
+	! !
+
+!ExternalInterfaceTest methodsFor: 'testing - list purchases' stamp: 'LR 7/22/2020 19:48:57'!
+test17ListPurchasesOfClientWithOnePurchaseShouldReturnCorrectListOfSalesAndTotal
+	| rest purchases |
+	
+	rest := self createRest.
+	self newPurchase: {4} of: {testObjects itemSellByTheStore} using: rest.
+	
+	purchases := rest listPurchasesOf: testObjects clientID withPassword: 'password'.
+	self assert: 4 equals: (purchases at: 'items') size.
+	self assert: 4000 equals: (purchases at: 'total').
+	self assert: 4 equals: ((purchases at: 'items') occurrencesOf: testObjects itemSellByTheStore).
+	
+	! !
+
+!ExternalInterfaceTest methodsFor: 'testing - list purchases' stamp: 'LR 7/22/2020 19:49:01'!
+test18ListPurchasesOfClientWithSeveralPurchasesShouldReturnCorrectListOfSalesAndTotal
+	| rest purchases |
+	
+	rest := self createRest.
+	self newPurchase: {4} of: {testObjects itemSellByTheStore} using: rest.
+	self newPurchase: {5. 4} of: {testObjects anotherItemSellByTheStore. testObjects itemSellByTheStore} using: rest.
+	
+	purchases := rest listPurchasesOf: testObjects clientID withPassword: 'password'.
+	self assert: 2 equals: purchases size.
+	
+	self assert: 10500 equals: (purchases at: 'total').
+	self assert: 13 equals: (purchases at: 'items') size.
+	self assert: 8 equals: ((purchases at: 'items') occurrencesOf: testObjects itemSellByTheStore).
+	self assert: 5 equals: ((purchases at: 'items') occurrencesOf: testObjects anotherItemSellByTheStore).! !
+
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:39:19'!
+authenticationDoing: aBlockClosure 
+	^AuthenticationSimulator doing: aBlockClosure! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:41:17'!
+calendar
+	^CalendarSimulator withANowValue: testObjects lastAccessedTime.! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:42:15'!
+createCartBy: anExternalInterface 
+	^anExternalInterface createCartFor: 'user' withPassword: 'password'! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:49:38'!
+createRest
+	^ExternalInterface withAuthentication: (self authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: self calendar.! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:40:42'!
+createRestWithAuth: authBehaviour 
+	^ExternalInterface withAuthentication: (self authenticationDoing: authBehaviour) withCatalog: testObjects defaultCatalog withBankCalendar: nil withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: nil.! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:47:28'!
+createRestWithBankCalendarDoing: aBankCalendarBehaviour
+	^ExternalInterface withAuthentication: (self authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: aBankCalendarBehaviour) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: self calendar.! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:51:49'!
+createRestWithCalendar: aCalendar
+	^ExternalInterface withAuthentication: (self authenticationDoing: []) withCatalog: testObjects defaultCatalog      withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: testObjects merchantProcessorDoingNothing withCalendar: aCalendar! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:53:29'!
+createRestWithMerchantProcessorDoing: aMerchantProcessorBehaviour
+	^ExternalInterface withAuthentication: (self authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: (testObjects merchantProcessorDoing: aMerchantProcessorBehaviour) withCalendar: self calendar.! !
+
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:27:14'!
+newPurchase: amounts of: items using: rest
+	| cartID index |
+	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
+	
+	index := 1.
+	amounts size timesRepeat: [
+			rest add: (amounts at: index) of: (items at: index) toCart: cartID.
+			index := index + 1.
+		].
+		
+	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.! !
+
+
 !ExternalInterfaceTest methodsFor: 'setUp/tearDown' stamp: 'LR 7/16/2020 18:56:46'!
 setUp
 	testObjects := TestObjects new.! !
+
+
+!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:07:26'!
+assertCantAdd: anAmount of: anItem raising: anErrorMessage  
+	|rest cartID|
+	rest := self createRest.
+	cartID := self createCartBy: rest.
+	
+	self should: [rest add: anAmount of: anItem toCart: cartID]
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [
+			:anError |
+			self assert: anError messageText = anErrorMessage.
+			self assert: (rest listCart: cartID) isEmpty.
+		]! !
+
+!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:17:42'!
+assertCantCheckout: aCartID usingCardNumber: aCardNumber withCardDueDate: aDueDate withCardOwner: anOwner  raising: anErrorMessage using: anExternalInterface
+	
+	self should: [
+		anExternalInterface checkout: aCartID 
+		usingCardNumber: aCardNumber 
+		withCardDueDate: aDueDate 
+		withCardOwner: anOwner ]
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [
+			:anError |
+			self assert: anError messageText = anErrorMessage .
+			self assert: anExternalInterface salesBook isEmpty.
+		].! !
+
+!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:11:11'!
+assertRaiseInvalidCartIDException: aBlockClosure 
+	self should: [aBlockClosure value: self createRest]
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [
+			:anError |
+			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
+		]! !
+
+!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:15:01'!
+assertSalesBookIsEmptyAfter: aBlockClosure raising: anErrorMessage 
+	| rest |
+	rest := self createRest.
+	self should: [aBlockClosure]
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [
+			:anError |
+			self assert: anError messageText = anErrorMessage.
+			self assert: rest salesBook isEmpty.
+		].! !
 
 
 !classDefinition: #TestObjects category: #TusLibros!
@@ -638,10 +682,6 @@ TestCase subclass: #TestObjects
 !TestObjects methodsFor: 'support' stamp: 'LR 7/19/2020 17:45:23'!
 anotherItemSellByTheStore
 	^'anotherValidBook'! !
-
-!TestObjects methodsFor: 'support' stamp: 'LR 7/16/2020 18:57:12'!
-authenticationDoing: aBlockClosure 
-	^AuthenticationSimulator doing: aBlockClosure! !
 
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 20:12:02'!
 beforeDueDate
@@ -678,6 +718,12 @@ defaultCatalog
 dueDate
 	^GregorianMonthOfYear yearNumber: 2003 monthNumber:10.! !
 
+!TestObjects methodsFor: 'support' stamp: 'LR 7/20/2020 21:17:53'!
+expiredDateTime
+	^GregorianDateTime
+		date: (FixedGregorianDate yearNumber: 2004 monthNumber: 01 dayNumber: 01)
+		timeOfDay: (TimeOfDay  hours: 00 minutes: 30 seconds: 10).! !
+
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 18:50:20'!
 invalidIDNumber
 	^'012345ab89876543'! !
@@ -695,6 +741,13 @@ itemNotSellByTheStore
 itemSellByTheStore
 	^'validBook'! !
 
+!TestObjects methodsFor: 'support' stamp: 'LR 7/20/2020 21:19:39'!
+lastAccessedTime
+	^GregorianDateTime
+		date: (FixedGregorianDate yearNumber: 2003 monthNumber: 12 dayNumber: 31)
+		timeOfDay: (TimeOfDay  hours: 23 minutes: 59 seconds: 59).
+	! !
+
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 21:14:31'!
 merchantProcessorDoing: aClosureToExecute
 	^MerchantProcessorSimulator doing: aClosureToExecute.! !
@@ -702,6 +755,12 @@ merchantProcessorDoing: aClosureToExecute
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 21:16:39'!
 merchantProcessorDoingNothing
 	^MerchantProcessorSimulator doing: [].! !
+
+!TestObjects methodsFor: 'support' stamp: 'LR 7/20/2020 21:18:10'!
+notExpiredDateTime
+	^GregorianDateTime
+		date: (FixedGregorianDate yearNumber: 2004 monthNumber: 01 dayNumber: 01)
+		timeOfDay: (TimeOfDay  hours: 00 minutes: 10 seconds: 10).! !
 
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 20:12:14'!
 passDueDate
@@ -716,30 +775,6 @@ validIDNumber
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 18:49:49'!
 validOwner
 	^'Pepito Gonzalez'! !
-
-
-!TestObjects methodsFor: 'as yet unclassified' stamp: 'LR 7/20/2020 21:19:39'!
-calendar
-	^CalendarSimulator withANowValue: self lastAccessedTime.! !
-
-!TestObjects methodsFor: 'as yet unclassified' stamp: 'LR 7/20/2020 21:17:53'!
-expiredDateTime
-	^GregorianDateTime
-		date: (FixedGregorianDate yearNumber: 2004 monthNumber: 01 dayNumber: 01)
-		timeOfDay: (TimeOfDay  hours: 00 minutes: 30 seconds: 10).! !
-
-!TestObjects methodsFor: 'as yet unclassified' stamp: 'LR 7/20/2020 21:19:39'!
-lastAccessedTime
-	^GregorianDateTime
-		date: (FixedGregorianDate yearNumber: 2003 monthNumber: 12 dayNumber: 31)
-		timeOfDay: (TimeOfDay  hours: 23 minutes: 59 seconds: 59).
-	! !
-
-!TestObjects methodsFor: 'as yet unclassified' stamp: 'LR 7/20/2020 21:18:10'!
-notExpiredDateTime
-	^GregorianDateTime
-		date: (FixedGregorianDate yearNumber: 2004 monthNumber: 01 dayNumber: 01)
-		timeOfDay: (TimeOfDay  hours: 00 minutes: 10 seconds: 10).! !
 
 
 !classDefinition: #AuthenticationSimulator category: #TusLibros!
@@ -1101,16 +1136,15 @@ assertNotEmptyCart: aCart
 
 !classDefinition: #ExternalInterface category: #TusLibros!
 Object subclass: #ExternalInterface
-	instanceVariableNames: 'authentication carts catalog randomizer salesBook bankCalendar merchantProcessor clients calendar'
+	instanceVariableNames: 'authentication carts catalog randomizer salesBook bankCalendar merchantProcessor calendar'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!ExternalInterface methodsFor: 'initialization' stamp: 'LR 7/20/2020 20:25:58'!
+!ExternalInterface methodsFor: 'initialization' stamp: 'LR 7/22/2020 19:10:05'!
 initializeWithAuthentication: anAuthentication withCatalog: aCatalog withBankCalendar: aBankCalendar withMerchantProcessor: aMerchantProcessor withCalendar: aCalendar     
 	authentication := anAuthentication.
 	carts := Dictionary new.
-	clients := OrderedCollection new.
 	catalog := aCatalog.
 	bankCalendar := aBankCalendar. 
 	salesBook := OrderedCollection new.
@@ -1148,9 +1182,9 @@ listCart: aCartID
 			^aCartSession cart items
 		]! !
 
-!ExternalInterface methodsFor: 'accessing' stamp: 'LR 7/19/2020 17:48:48'!
-listPurchases: aClientID
-	( clients includes: aClientID ) ifFalse: [self error: self class invalidClientErrorMessage].
+!ExternalInterface methodsFor: 'accessing' stamp: 'LR 7/22/2020 19:02:30'!
+listPurchasesOf: aClientID withPassword: aPassword 
+	authentication authenticate: aClientID using: aPassword.
 	^self purchasesOf: aClientID.! !
 
 
@@ -1185,7 +1219,7 @@ withCartID: aCartID do: aClosure
 	aClosure value: cartSession.! !
 
 
-!ExternalInterface methodsFor: 'cart creation' stamp: 'LR 7/20/2020 21:03:49'!
+!ExternalInterface methodsFor: 'cart creation' stamp: 'LR 7/22/2020 19:09:39'!
 createCartFor: aClientID withPassword: aPassword
 	| cart cartID |
 	
@@ -1193,7 +1227,6 @@ createCartFor: aClientID withPassword: aPassword
 	cart := Cart acceptingItemsOf: catalog.
 	cartID := self createCartID.
 	carts at: cartID put: (CartSession for: cart withID: cartID forClient: aClientID withTime: calendar now).
-	(clients includes: aClientID) ifFalse: [clients add: aClientID].
 	^cartID! !
 
 !ExternalInterface methodsFor: 'cart creation' stamp: 'LR 7/16/2020 20:18:21'!
