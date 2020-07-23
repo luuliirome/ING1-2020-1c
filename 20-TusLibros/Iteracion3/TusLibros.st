@@ -352,10 +352,10 @@ test02CreateCartReturnsAValidCartIDWhenUsingValidParams
 	self assert: (rest listCart: cartID) isEmpty.! !
 
 
-!ExternalInterfaceTest methodsFor: 'testing - list cart' stamp: 'SA 7/23/2020 14:46:32'!
+!ExternalInterfaceTest methodsFor: 'testing - list cart' stamp: 'LR 7/23/2020 15:33:59'!
 test07CantListCartWithInvalidCartID
 "Por como se crean los ids de los carts, invalid-cat-id podemos garantizar que es siempre invalido"
-	self assertRaiseInvalidCartIDException: [:anExternalInterface | anExternalInterface listCart: testObjects invalidCartID].
+	self assertRaiseInvalidCartIDException: [:anExternalInterface | anExternalInterface listCart: self invalidCartID].
 ! !
 
 
@@ -388,13 +388,13 @@ test06ListCartShowsItemsAdded
 	self assert: 2 equals: cartContent size.! !
 
 
-!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'SA 7/23/2020 14:45:45'!
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/23/2020 15:34:09'!
 test08CantCheckoutCartWithInvalidCartID
 
 	| rest |
 	rest := self createRest.
 
-	self assertCantCheckout: testObjects invalidCartID 
+	self assertCantCheckout: self invalidCartID 
 	usingCardNumber: '1234' 
 	withCardDueDate: testObjects dueDate 
 	withCardOwner: 'owner' 
@@ -601,6 +601,10 @@ createRestWithCalendar: aCalendar
 createRestWithMerchantProcessorDoing: aMerchantProcessorBehaviour
 	^ExternalInterface withAuthentication: (self authenticationDoing: []) withCatalog: testObjects defaultCatalog withBankCalendar: (BankCalendarSimulator doing: [testObjects beforeDueDate]) withMerchantProcessor: (testObjects merchantProcessorDoing: aMerchantProcessorBehaviour) withCalendar: self calendar.! !
 
+!ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/23/2020 15:33:24'!
+invalidCartID
+	^'invalid-cart-id'! !
+
 !ExternalInterfaceTest methodsFor: 'support' stamp: 'LR 7/22/2020 19:27:14'!
 newPurchase: amounts of: items using: rest
 	| cartID index |
@@ -620,7 +624,7 @@ setUp
 	testObjects := TestObjects new.! !
 
 
-!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:07:26'!
+!ExternalInterfaceTest methodsFor: 'assertions' stamp: 'LR 7/22/2020 20:07:26'!
 assertCantAdd: anAmount of: anItem raising: anErrorMessage  
 	|rest cartID|
 	rest := self createRest.
@@ -634,7 +638,7 @@ assertCantAdd: anAmount of: anItem raising: anErrorMessage
 			self assert: (rest listCart: cartID) isEmpty.
 		]! !
 
-!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:17:42'!
+!ExternalInterfaceTest methodsFor: 'assertions' stamp: 'LR 7/22/2020 20:17:42'!
 assertCantCheckout: aCartID usingCardNumber: aCardNumber withCardDueDate: aDueDate withCardOwner: anOwner  raising: anErrorMessage using: anExternalInterface
 	
 	self should: [
@@ -649,7 +653,7 @@ assertCantCheckout: aCartID usingCardNumber: aCardNumber withCardDueDate: aDueDa
 			self assert: anExternalInterface salesBook isEmpty.
 		].! !
 
-!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:11:11'!
+!ExternalInterfaceTest methodsFor: 'assertions' stamp: 'LR 7/22/2020 20:11:11'!
 assertRaiseInvalidCartIDException: aBlockClosure 
 	self should: [aBlockClosure value: self createRest]
 	raise: Error - MessageNotUnderstood 
@@ -658,7 +662,7 @@ assertRaiseInvalidCartIDException: aBlockClosure
 			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
 		]! !
 
-!ExternalInterfaceTest methodsFor: 'as yet unclassified' stamp: 'LR 7/22/2020 20:15:01'!
+!ExternalInterfaceTest methodsFor: 'assertions' stamp: 'LR 7/22/2020 20:15:01'!
 assertSalesBookIsEmptyAfter: aBlockClosure raising: anErrorMessage 
 	| rest |
 	rest := self createRest.
@@ -722,10 +726,6 @@ expiredDateTime
 	^GregorianDateTime
 		date: (FixedGregorianDate yearNumber: 2004 monthNumber: 01 dayNumber: 01)
 		timeOfDay: (TimeOfDay  hours: 00 minutes: 30 seconds: 10).! !
-
-!TestObjects methodsFor: 'support' stamp: 'SA 7/23/2020 14:46:56'!
-invalidCartID
-	^'invalid-cart-id'! !
 
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 18:50:20'!
 invalidIDNumber
