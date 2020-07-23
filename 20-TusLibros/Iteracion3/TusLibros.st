@@ -303,30 +303,6 @@ TestCase subclass: #ExternalInterfaceTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/22/2020 19:50:06'!
-test19CantCheckoutACartAlreadyCheckouted
-
-"Solo chequeamos este caso, ya que por la implementación, una vez hecho el checkout, el cart pasa a ser INVALIDO, y el caso de carrito invalido con cada operacion ya está chequeado."
-	| rest cartID |
-	
-	rest := self createRest.
-	
-	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
-	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
-	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.
-
-	self should: [rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [
-			:anError |
-			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
-		]
-	
-	
-	
-	
-	! !
-
 !ExternalInterfaceTest methodsFor: 'testing' stamp: 'LR 7/22/2020 19:50:50'!
 test20CantDoAnythingWithAnExpiredCart
 
@@ -376,10 +352,10 @@ test02CreateCartReturnsAValidCartIDWhenUsingValidParams
 	self assert: (rest listCart: cartID) isEmpty.! !
 
 
-!ExternalInterfaceTest methodsFor: 'testing - list cart' stamp: 'LR 7/22/2020 20:11:23'!
+!ExternalInterfaceTest methodsFor: 'testing - list cart' stamp: 'SA 7/23/2020 14:46:32'!
 test07CantListCartWithInvalidCartID
 "Por como se crean los ids de los carts, invalid-cat-id podemos garantizar que es siempre invalido"
-	self assertRaiseInvalidCartIDException: [:anExternalInterface | anExternalInterface listCart: 'invalid-cart-id'].
+	self assertRaiseInvalidCartIDException: [:anExternalInterface | anExternalInterface listCart: testObjects invalidCartID].
 ! !
 
 
@@ -412,14 +388,13 @@ test06ListCartShowsItemsAdded
 	self assert: 2 equals: cartContent size.! !
 
 
-!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 20:18:39'!
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'SA 7/23/2020 14:45:45'!
 test08CantCheckoutCartWithInvalidCartID
 
-	| rest invalidCartID |
+	| rest |
 	rest := self createRest.
-	invalidCartID := 'invalid-cart-id'.
 
-	self assertCantCheckout: invalidCartID 
+	self assertCantCheckout: testObjects invalidCartID 
 	usingCardNumber: '1234' 
 	withCardDueDate: testObjects dueDate 
 	withCardOwner: 'owner' 
@@ -511,6 +486,30 @@ test14SalesBookTotalCorrectWhenCheckoutCart
 	self newPurchase: {4} of: {testObjects itemSellByTheStore} using: rest.
 	self assert: 4000 equals: (rest salesBook at: 1) total.
 ! !
+
+!ExternalInterfaceTest methodsFor: 'testing - checkout' stamp: 'LR 7/22/2020 19:50:06'!
+test19CantCheckoutACartAlreadyCheckouted
+
+"Solo chequeamos este caso, ya que por la implementación, una vez hecho el checkout, el cart pasa a ser INVALIDO, y el caso de carrito invalido con cada operacion ya está chequeado."
+	| rest cartID |
+	
+	rest := self createRest.
+	
+	cartID := rest createCartFor: testObjects clientID withPassword: 'password'.
+	rest add: 4 of: testObjects itemSellByTheStore toCart: cartID.
+	rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.
+
+	self should: [rest checkout: cartID usingCardNumber: testObjects validIDNumber withCardDueDate: testObjects dueDate withCardOwner: testObjects validOwner.]
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [
+			:anError |
+			self assert: anError messageText = ExternalInterface invalidCartErrorMessage.
+		]
+	
+	
+	
+	
+	! !
 
 
 !ExternalInterfaceTest methodsFor: 'testing - list purchases' stamp: 'LR 7/22/2020 19:48:49'!
@@ -723,6 +722,10 @@ expiredDateTime
 	^GregorianDateTime
 		date: (FixedGregorianDate yearNumber: 2004 monthNumber: 01 dayNumber: 01)
 		timeOfDay: (TimeOfDay  hours: 00 minutes: 30 seconds: 10).! !
+
+!TestObjects methodsFor: 'support' stamp: 'SA 7/23/2020 14:46:56'!
+invalidCartID
+	^'invalid-cart-id'! !
 
 !TestObjects methodsFor: 'support' stamp: 'LR 7/13/2020 18:50:20'!
 invalidIDNumber
@@ -1017,7 +1020,6 @@ Cart class
 !Cart class methodsFor: 'instance creation' stamp: 'LR 7/20/2020 19:27:57'!
 acceptingItemsOf: aCatalog 
 	^self new initializeAcceptingItemsOf: aCatalog.! !
-
 
 
 !Cart class methodsFor: 'errors' stamp: 'LR 7/19/2020 17:13:12'!
